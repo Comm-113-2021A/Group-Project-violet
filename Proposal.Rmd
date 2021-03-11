@@ -1,0 +1,139 @@
+---
+title: "Proposal"
+author: "Ian, Kaitlyn, Aamir"
+date: "3/8/2021"
+output: html_document
+---
+
+```{r packages, message = FALSE}
+library(tidyverse)
+library(rvest)
+library(skimr)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Introduction
+
+Our general research question is: which of the variables recorded, if any, exhibit trends with general alcohol consumption?
+
+We hypothesize that there will be a strong negative correlation between alcohol consumption and numerous variables, particularly the following variables: study time, number of previously failed classes, and free time.     
+ 
+The data was sourced from https://www.kaggle.com/uciml/student-alcohol-consumption / https://archive.ics.uci.edu/ml/datasets/STUDENT+ALCOHOL+CONSUMPTION. The data was from a survey of math and portuguese students in highschool, most likely in Portugal. There are two separate data sets involved: student-mat.csv for students in the math course, and student-por.csv for students in the portuguese course. Both data sets have school, sex, age, address type, family size, parental status, maternal education, paternal education, maternal employment, paternal employment, reason for education, guardian, travel time, study time, past class failures, school support, family support, extra paid classes, extracurricular activities, nursery school attendance, higher education intention, internet access, romantic status, familial relationship quality, free time, frequency of going out, health, absences, first, second, and final grade workday alcohol consumption, and weekend alcohol consumption. We decided to use the 649 portuguese students surveyed. 
+
+### Data
+
+```{r}
+students_por <- read.csv("student-por.csv")
+
+write_csv(students_por, file = "data/student-por.csv")
+```
+
+Mutated to add the total alcohol consumption from 1 to 10 with one being very low consumption 10 being very high. 
+``` {r newTalc}
+students_por_total <- students_por %>%
+  mutate (
+    Talc = Dalc + Walc
+  )
+```
+
+```{r glimps-skim, eval = TRUE}
+glimpse(students_por_total)
+
+skim(students_por_total)
+```
+
+### Data analysis plan
+ 
+The data analysis will primarily focus on building relationships between workday/weekend/total alcohol consumption and other related variables. As a result, alcohol consumption will be the response, Y, and the predictor variable with change based on the analysis. We will consider running analysis for both workday, weekend, and total alcohol consumption, as well as creating an average of workday and weekday alcohol consumption. Initial variables that could help out with analysis are age, address, familial relationship, frequency of going out, and free time.
+ 
+A comparison group we might use is the World Health Organization’s data on alcohol consumption per capita and by age: https://apps.who.int/gho/data/node.main.A1026?lang=en?showonly=GISAH. 
+
+A few methods that will be useful in exploring the relationship between these variables are side by side box  plots, bar charts,  or potentially regression analysis.
+
+Visualization will definitely be important to recognize trends. Our results will focus on the correlation between alcohol consumption and our chosen variables. To support our hypothesis, our visualizations need show that as alcohol consumption increases, study time, the number of previously failed classes, and reported free time decreases.
+
+#### Preliminary Exploratory Data Analysis
+
+```{r TalcViz}
+ggplot(data = students_por_total, mapping = aes(x = Talc)) +
+  geom_histogram(binwidth = 1)
+```
+Most students have relatively low reported total alcohol consumption. 
+
+```{r DalcViz}
+ggplot(data = students_por_total, mapping = aes(x = Dalc)) +
+  geom_histogram(binwidth = 1)
+```
+Most students have relatively low reported weekday alcohol consumption. 
+
+```{r WalcViz}
+ggplot(data = students_por_total, mapping = aes(x = Walc)) +
+  geom_histogram(binwidth = 1)
+```
+Most students drink more on the weekend than on the weekdays. 
+
+##### Alcohol Consumption Summary Statistics: 
+``` {r sumstat-alc, eval = TRUE}
+sum_stat_Dalc <-
+  students_por_total %>%
+    summarise(min_Dalc = min(Dalc),
+              mean_Dalc = mean(Dalc),
+              median_Dalc = median(Dalc),
+              sd_Dalc = sd(Dalc),
+              max_Dalc = max(Dalc),
+              iqr_Dalc = IQR(Dalc),
+              )
+
+sum_stat_Dalc
+
+sum_stat_Walc <-
+  students_por_total %>%
+    summarise(min_Walc = min(Walc),
+              mean_Walc = mean(Walc),
+              median_Walc = median(Walc),
+              sd_Walc = sd(Walc),
+              max_Walc = max(Walc),
+              iqr_Walc = IQR(Walc),
+              )
+
+sum_stat_Walc
+
+sum_stat_Talc <-
+  students_por_total %>%
+    summarise(min_Talc = min(Talc),
+              mean_Talc = mean(Talc),
+              median_Talc = median(Talc),
+              sd_Talc = sd(Talc),
+              max_Talc = max(Talc),
+              iqr_Talc = IQR(Talc),
+              )
+
+sum_stat_Talc
+
+```
+
+##### Alcohol Consumption Compared to Other Variables: 
+```{r graph-freetime, eval = TRUE}
+students_por_grouped <- students_por_total %>% select(freetime, Talc) %>% group_by(Talc) 
+
+
+students_por_grouped %>%
+  ggplot(mapping = aes(x = freetime)) +    
+  geom_bar() + 
+  facet_wrap(~as.numeric(Talc))
+```
+Consistently, higher alcohol consumptions correlates to lower reported free times. 
+
+```{r graph-studytime, eval = TRUE}
+students_por_grouped <- students_por_total %>% select(studytime, Talc) %>% group_by(Talc) 
+
+
+students_por_grouped %>%
+  ggplot(mapping = aes(x = studytime)) +    
+  geom_bar() + 
+  facet_wrap(~as.numeric(Talc))
+```
+Consistently, higher alcohol consumptions correlates to lower reported study times. 
