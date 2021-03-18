@@ -15,6 +15,10 @@ library(skimr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+yl: this is really well done. you followed the instructions perfectly and did a nice job with the exploratory data analysis. I think you can push this further with some of the tools we'll learn next week. In particular, I think you can build a machine learning/prediction model to figure out which students are at risk for problematic alcohol consumption. The second link doesn't work btw. This can then, theoretically, be used to create a system to spot if teachers/caretakers/parents etc should pay special attention to any particular student. 
+10/10
+
+
 ### Introduction
 
 Our general research question is: which of the variables recorded, if any, exhibit trends with general alcohol consumption?
