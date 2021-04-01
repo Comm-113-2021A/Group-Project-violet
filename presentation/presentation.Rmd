@@ -44,7 +44,7 @@ class: center, middle
 
 ## A statement of the overall goal / research question
 
----
+The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcojolism.
 
 class: inverse, center, middle
 
