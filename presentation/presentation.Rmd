@@ -1,7 +1,7 @@
 ---
-title: "Presentation title"
-subtitle: "Presentation subtitle (if any)"
-author: "Team name <br> Names of team members"
+title: "Factors of Alcoholism"
+subtitle: "in teens"
+author: "Team Violet"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -18,9 +18,10 @@ output:
 # Add any additional packages you need to this chunk
 library(tidyverse)
 library(tidymodels)
-library(palmerpenguins)
 library(knitr)
 library(xaringanthemer)
+library(palmerpenguins)
+library(showtext)
 ```
 
 ```{r setup, include=FALSE}
@@ -34,7 +35,7 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 
 ```{r}
 style_xaringan(
-  title_slide_background_image = "img/confetti.jpg"
+  title_slide_background_image = "presentation/img/confetti.jpg"
 )
 ```
 
