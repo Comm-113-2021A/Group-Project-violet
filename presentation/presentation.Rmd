@@ -44,7 +44,7 @@ class: center, middle
 
 ## A statement of the overall goal / research question
 
-The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcojolism.
+The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcoholism.
 
 class: inverse, center, middle
 
@@ -53,6 +53,11 @@ class: inverse, center, middle
 ---
 
 # Hello World
+
+```{r load_data}
+student_por <- read.csv("../data/student-por.csv")
+student_por
+```
 
 - Click the `Knit` button to compile your presentation
 
