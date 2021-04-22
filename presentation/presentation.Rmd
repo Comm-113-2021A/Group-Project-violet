@@ -99,6 +99,75 @@ student_por %>%
   summarise(mean=mean(Talc))
 
 ```
+```{r linear_reg}
+lin_model <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Talc ~ school +
+        sex +
+        age + 
+        address + 
+        famsize + 
+        Pstatus + 
+        Medu +
+        Fedu +
+        Mjob + 
+        Fjob + 
+        reason +
+        guardian +
+        traveltime +
+        studytime +
+        failures +
+        schoolsup +
+        famsup +
+        paid +
+        activities +
+        nursery +
+        higher +
+        internet +
+        romantic +
+        famrel +
+        freetime +
+        goout +
+        health +
+        absences, data = student_por)
+
+line_tidy <- tidy(lin_model) %>% 
+  filter(p.value < 0.05)
+
+line_tidy
+```
+```{r new_model}
+lin_model2 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Talc ~ school +
+        age + 
+        failures + 
+        freetime + 
+        sex +
+        Fjob + 
+        Mjob +
+        reason + 
+        studytime +
+        famsup +
+        goout +
+        health +
+        absences, data = student_por)
+```
+
+
+
+
+```{r resid}
+aug <- augment(lin_model2$fit)
+
+aug %>%
+  ggplot(mapping = aes(x = .fitted, y = .resid)) +
+  geom_jitter() + 
+  geom_hline(yintercept = 0)
+```
+Note limitation - prediction confidence may be too low, std error artificially low
+
+
 Visualizing school
 
 ```{r school, eval = TRUE}
