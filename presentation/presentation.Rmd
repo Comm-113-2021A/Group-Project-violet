@@ -99,6 +99,230 @@ student_por %>%
   summarise(mean=mean(Talc))
 
 ```
+Visualizing school
+
+```{r school, eval = TRUE}
+student_por_school <- student_por %>% 
+  select(school, Talc) %>% 
+  group_by(school) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_school %>%
+  ggplot(mapping = aes(x = school, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By School", 
+    x = "School", 
+    y = "Average Total Alcohol Consumption"
+  )
+
+```
+
+There does not appear to be a siginificant difference between schools.
+---
+Visualizing Sex
+
+```{r sex, eval = TRUE}
+student_por_sex <- student_por %>% 
+  select(sex, Talc) %>% 
+  group_by(sex) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_sex %>%
+  ggplot(mapping = aes(x = sex, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Sex", 
+    x = "Sex", 
+    y = "Average Total Alcohol Consumption"
+  )
+```
+
+Males seem to drink more, on average, than females. 
+---
+Visualizing age
+
+```{r age, eval = TRUE}
+student_por_age <- student_por %>% 
+  select(age, Talc)
+
+  
+student_por_age %>%
+  ggplot(mapping = aes(x = age, y = Talc)) +
+  geom_jitter() +
+  labs(
+    title = "Age vs Total Alcohol Consumption", 
+    x = "Age", 
+    y = "Total Alcohol Consumption"
+  )
+```
+
+There does not seem to be a correlation between age and total alcohol consumption. 
+
+---
+Visualizing Address
+
+```{r address, eval = TRUE}
+student_por_address <- student_por %>% 
+  select(address, Talc) %>% 
+  group_by(address) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_address %>%
+  ggplot(mapping = aes(x = address, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Address", 
+    x = "Address", 
+    y = "Average Total Alcohol Consumption"
+  )
+```
+There does not seem to be a significant difference between average alchol consumption between rural and urban highschools. 
+
+---
+Visualizing Family Size
+
+```{r famsize, eval = TRUE}
+student_por_famsize <- student_por %>% 
+  select(famsize, Talc) %>% 
+  group_by(famsize) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_famsize %>%
+  ggplot(mapping = aes(x = famsize, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Family Size", 
+    x = "Family Size", 
+    y = "Average Total Alcohol Consumption"
+  )
+```
+There does not appear to be a significant difference between average alcohol consumption and family size. 
+
+---
+Visualizing Parent's Cohabitation Status
+
+```{r Pstatus, eval = TRUE}
+student_por_Pstatus <- student_por %>% 
+  select(Pstatus, Talc) %>% 
+  group_by(Pstatus) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_Pstatus %>%
+  ggplot(mapping = aes(x = Pstatus, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Parental Cohabitation Status", 
+    x = "Cohabitation Status", 
+    y = "Average Total Alcohol Consumption"
+  )
+```
+Highschoolers with parents who live together have a higher average total alcohol consumption value, than those whose parents live apart. 
+---
+Visualizing Mother's Education 
+
+```{r Medu, eval = TRUE}
+student_por_Medu <- student_por %>% 
+  select(Medu, Talc)
+
+
+student_por_Medu %>%
+  ggplot(mapping = aes(x = Medu, y = Talc)) +
+  geom_jitter() +
+  labs(
+    title = "Mothers Education vs Average Total Alcohol Consumption", 
+    x = "Mother's Education", 
+    y = "Total Alcohol Consumption"
+  )
+```
+There does not seem to be a relationship between mother's education and total alcohol consumption.
+---
+Visualizing Father's Education 
+
+```{r Fedu, eval = TRUE}
+student_por_Fedu <- student_por %>% 
+  select(Fedu, Talc)
+
+
+student_por_Fedu %>%
+  ggplot(mapping = aes(x = Fedu, y = Talc)) +
+  geom_jitter() +
+  labs(
+    title = "Father's Education vs Average Total Alcohol Consumption", 
+    x = "Father's Education", 
+    y = "Total Alcohol Consumption"
+  )
+```
+There does not seem to be a relationship between father's education and total alcohol consumption.
+
+---
+Visualizing Mother's Job
+
+```{r Mjob, eval = TRUE}
+student_por_Mjob <- student_por %>% 
+  select(Mjob, Talc) %>% 
+  group_by(Mjob) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_Mjob %>%
+  ggplot(mapping = aes(x = Mjob, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Mother's Job", 
+    x = "Mother's Job", 
+    y = "Average Total Alcohol Consumption"
+  )
+```
+High schoolers with mothers who work in health care have the lowest average alcohol consumption, while those with mothers who work in civil services have the highest. 
+
+---
+Visualizing Father's Job
+
+```{r Fjob, eval = TRUE}
+student_por_Fjob <- student_por %>% 
+  select(Fjob, Talc) %>% 
+  group_by(Fjob) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_Fjob %>%
+  ggplot(mapping = aes(x = Fjob, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Father's Job", 
+    x = "Father's Job", 
+    y = "Average Total Alcohol Consumption"
+  )
+```
+High schoolers whose fathers are teachers have the lowest total alcohol consumption while those with fathers in civil service jobs have the highest. 
+
+---
+Visualizing Reason Job
+
+```{r reason, eval = TRUE}
+student_por_reason <- student_por %>% 
+  select(reason, Talc) %>% 
+  group_by(reason) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_reason %>%
+  ggplot(mapping = aes(x = reason, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Reason for Joining School", 
+    x = "Reason", 
+    y = "Average Total Alcohol Consumption"
+  )
+```
+High schoolers who choose their school based on reputation have the lowest total alohol consumption while those who choose for reasons besides courses, closeness to home, and reputation, have the highest. 
+---
 - Click the `Knit` button to compile your presentation
 
 - Make sure to commit and push all resulting files to your GitHub repo
