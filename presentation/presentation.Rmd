@@ -56,6 +56,10 @@ class: inverse, center, middle
 
 ```{r load_data}
 student_por <- read.csv("../data/student-por.csv")
+
+ncol(student_por)
+
+student_por <- student_por %>% mutate(Talc=(2/7*(Walc)+5/7*(Dalc)))
 student_por
 ```
 
