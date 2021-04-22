@@ -60,9 +60,45 @@ student_por <- read.csv("../data/student-por.csv")
 ncol(student_por)
 
 student_por <- student_por %>% mutate(Talc=(2/7*(Walc)+5/7*(Dalc)))
-student_por
+
 ```
 
+```{r EDA_Aamir}
+
+student_por %>% group_by(sex) %>% summarise(mean=mean(Talc))
+
+student_por %>% 
+  ggplot(aes(x=Talc, y=health)) +
+  geom_jitter() + geom_smooth()
+
+student_por %>% 
+  ggplot(aes(x=Medu, y=Talc)) + 
+  geom_jitter() + 
+  geom_smooth()
+
+student_por %>% 
+  ggplot(aes(x=Fedu, y=Talc)) + 
+  geom_jitter() + 
+  geom_smooth()
+  
+student_por %>%
+  ggplot(aes(x=Talc, fill=sex)) +
+  geom_histogram(binwidth = .25)
+
+student_por %>%
+  ggplot(aes(x=age, y=Talc)) +
+  geom_jitter() +
+  geom_smooth()
+
+student_por %>%
+  group_by(Mjob) %>%
+  summarise(mean=mean(Talc))
+
+student_por %>%
+  group_by(Fjob) %>%
+  summarise(mean=mean(Talc))
+
+```
 - Click the `Knit` button to compile your presentation
 
 - Make sure to commit and push all resulting files to your GitHub repo
