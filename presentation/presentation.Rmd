@@ -54,17 +54,26 @@ class: inverse, center, middle
 
 # Hello World
 
-```{r load_data}
+```{r load_data-make-cols}
 student_por <- read.csv("../data/student-por.csv")
 
-ncol(student_por)
-
-student_por <- student_por %>% mutate(Talc=(2/7*(Walc)+5/7*(Dalc)))
+student_por <- student_por %>% mutate(Talc=(2/7*(Walc)+5/7*(Dalc)),
+       Alcoholism = if_else(Talc < 3, 0, 1),
+       Alcoholism = factor(Alcoholism))
 
 ```
 
-```{r EDA_Aamir}
+```{r alcoholism-counts}
+student_por %>%
+  group_by(Alcoholism) %>%
+  count()
 
+student_mat %>%
+  group_by(Alcoholism) %>%
+  count()
+```
+
+```{r EDA_Aamir}
 student_por %>% group_by(sex) %>% summarise(mean=mean(Talc))
 
 student_por %>% 
@@ -99,129 +108,6 @@ student_por %>%
   summarise(mean=mean(Talc))
 
 ```
-```{r linear_reg}
-lin_model <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(Talc ~ school +
-        sex +
-        age + 
-        address + 
-        famsize + 
-        Pstatus + 
-        Medu +
-        Fedu +
-        Mjob + 
-        Fjob + 
-        reason +
-        guardian +
-        traveltime +
-        studytime +
-        failures +
-        schoolsup +
-        famsup +
-        paid +
-        activities +
-        nursery +
-        higher +
-        internet +
-        romantic +
-        famrel +
-        freetime +
-        goout +
-        health +
-        absences, data = student_por)
-
-line_tidy <- tidy(lin_model) %>% 
-  filter(p.value < 0.05)
-
-line_tidy
-```
-```{r new_model}
-lin_model2 <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(Talc ~ school +
-        age + 
-        failures + 
-        freetime + 
-        sex +
-        Fjob + 
-        Mjob +
-        reason + 
-        studytime +
-        famsup +
-        goout +
-        health +
-        absences, data = student_por)
-```
-
-```{r test_train_data}
-
-student_por2 <- student_por %>%
-  select(school,
-        age,
-        failures,
-        freetime,
-        sex,
-        Fjob,
-        Mjob,
-        reason,
-        studytime,
-        famsup,
-        goout,
-        health,
-        absences,
-        Talc
-        )
-
-set.seed(1234)
-student_por_pred_split <- initial_split(student_por2)
-
-student_por_pred_train <- training(student_por_pred_split)
-student_por_pred_test <- testing(student_por_pred_split)
-
-student_por_pred_rec <- recipe(Talc ~ ., data = student_por_pred_train) %>%
-  step_zv(all_predictors())
-
-student_por_model <- linear_reg() %>%
-  set_engine("lm")
-
-student_por_pred_workflow <- workflow() %>% add_model(student_por_model) %>% 
-  add_recipe(student_por_pred_rec)
-
-student_por_pred_fit <- student_por_pred_workflow %>% 
-  fit(data = student_por_pred_train)
-student_por_pred_fit
-
-summary(student_por_pred_fit$fit)
-
-student_por_train_pred <- predict(student_por_pred_fit, student_por_pred_train) %>%
-  bind_cols(student_por_pred_train %>% select(Talc))
-
-student_por_train_pred
-
-ggplot(data = student_por_train_pred, aes(x=Talc, y=.pred)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
-  labs(
-    x = "Actual",
-    y = "Predicted"
-  ) +
-  geom_smooth()
-
-
-```
-
-```
-
-```{r resid}
-aug <- augment(lin_model2$fit)
-
-aug %>%
-  ggplot(mapping = aes(x = .fitted, y = .resid)) +
-  geom_jitter() + 
-  geom_hline(yintercept = 0)
-```
-Note limitation - prediction confidence may be too low, std error artificially low
 
 
 Visualizing school
@@ -436,7 +322,6 @@ student_por_reason <- student_por %>%
   group_by(reason) %>%
   summarise(average_talc = mean(Talc))
 
-
 student_por_reason %>%
   ggplot(mapping = aes(x = reason, y = average_talc)) +
   geom_col() +
@@ -448,9 +333,149 @@ student_por_reason %>%
 ```
 High schoolers who choose their school based on reputation have the lowest total alohol consumption while those who choose for reasons besides courses, closeness to home, and reputation, have the highest. 
 ---
-- Click the `Knit` button to compile your presentation
 
-- Make sure to commit and push all resulting files to your GitHub repo
+
+```{r linear_reg}
+lin_model <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Talc ~ school +
+        sex +
+        age + 
+        address + 
+        famsize + 
+        Pstatus + 
+        Medu +
+        Fedu +
+        Mjob + 
+        Fjob + 
+        reason +
+        guardian +
+        traveltime +
+        studytime +
+        failures +
+        schoolsup +
+        famsup +
+        paid +
+        activities +
+        nursery +
+        higher +
+        internet +
+        romantic +
+        famrel +
+        freetime +
+        goout +
+        health +
+        absences, data = student_por)
+
+line_tidy <- tidy(lin_model) %>% 
+  filter(p.value < 0.05)
+
+line_tidy
+```
+
+```{r new_model}
+lin_model2 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Talc ~ school +
+        age + 
+        failures + 
+        freetime + 
+        sex +
+        Fjob + 
+        Mjob +
+        reason + 
+        studytime +
+        famsup +
+        goout +
+        health +
+        absences, data = student_por)
+```
+
+```{r test_train_data}
+student_por2 <- student_por %>%
+  select(school,
+        age,
+        failures,
+        freetime,
+        sex,
+        Fjob,
+        Mjob,
+        reason,
+        studytime,
+        famsup,
+        goout,
+        health,
+        absences,
+        Talc
+        )
+
+set.seed(1234)
+student_por_pred_split <- initial_split(student_por2)
+
+student_por_pred_train <- training(student_por_pred_split)
+student_por_pred_test <- testing(student_por_pred_split)
+
+student_por_pred_rec <- recipe(Talc ~ ., data = student_por_pred_train) %>%
+  step_zv(all_predictors())
+
+student_por_model <- linear_reg() %>%
+  set_engine("lm")
+
+student_por_pred_workflow <- workflow() %>% add_model(student_por_model) %>% 
+  add_recipe(student_por_pred_rec)
+
+student_por_pred_fit <- student_por_pred_workflow %>% 
+  fit(data = student_por_pred_train)
+student_por_pred_fit
+
+summary(student_por_pred_fit$fit)
+
+student_por_train_pred <- predict(student_por_pred_fit, student_por_pred_train) %>%
+  bind_cols(student_por_pred_train %>% select(Talc))
+
+student_por_train_pred
+
+ggplot(data = student_por_train_pred, aes(x=Talc, y=.pred)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
+  labs(
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  geom_smooth()
+
+
+```
+
+```{r resid}
+aug <- augment(lin_model2$fit)
+
+aug %>%
+  ggplot(mapping = aes(x = .fitted, y = .resid)) +
+  geom_jitter() + 
+  geom_hline(yintercept = 0)
+```
+Note limitation - prediction confidence may be too low, std error artificially low
+
+```{r logit-model}
+alcoholism_fit <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(Alcoholism ~ school +
+        age + 
+        failures + 
+        freetime + 
+        sex +
+        Fjob + 
+        Mjob +
+        reason + 
+        studytime +
+        famsup +
+        goout +
+        health +
+        absences, data = student_por)
+
+tidy(alcoholism_fit)
+```
 
 ---
 
