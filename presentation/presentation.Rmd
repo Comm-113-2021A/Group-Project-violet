@@ -141,10 +141,11 @@ student_por_Pstatus %>%
     y = "Average Total Alcohol Consumption"
   )
 ```
+
 ---
----
-# First attempt 
-  
+class: inverse, middle, center
+
+# Attempt: Linear Models
 
 ---
 
@@ -152,8 +153,16 @@ student_por_Pstatus %>%
 
 We first attempted to create a linear regression model to predict total alcohol consumption with variables we suspected to be associated with total alcohol consumption based on visualizations. 
 
+The following equation was established from our initial model: 
+
+$$\hat{Total Alcohol Level} = 0.07(MS School) +0.06(Age)+0.03(failures)-0.02(Free time)+0.54(Male)+$$
+$$0.17(FatherJobHealth)+0.11(FatherJobOther)+0.30(FatherJobService)-0.05(FatherJobTeacher)-$$
+$$0.24(MotherJobHealth)-0.09(MotherJobOther)-0.04(MotherJobService)+0.05(MotherJobTeacher)+$$
+$$0.12(ReasonHome)+0.29(ReasonOther)+0.005(ReasonReputation)-0.081(StudyTime)+$$
+$$0.03(FamilySupportYes)+0.23(GoingOut)+0.04(Health)+0.03(Absences)$$
+
 .pull-left[
-```{r new_model}
+```{r new_model, echo = FALSE}
 lin_model <- linear_reg() %>%
   set_engine("lm") %>%
   fit(Talc ~ school +
@@ -171,14 +180,8 @@ lin_model <- linear_reg() %>%
         absences, data = student_por)
 ```
 ]
-.pull-right[
-```{r} 
-tidy(lin_model)
-```
-]
 
 ---
---- 
 
 # Residual Plot
 
