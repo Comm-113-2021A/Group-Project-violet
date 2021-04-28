@@ -67,9 +67,84 @@ count
 
 Roughly `r round(count[2, 2] / (count[1, 2] + count[2, 2]) * 100, 2)`% of students have a total alcohol consumption higher than 3 (out of a max of 5).
 ---
-class: inverse, middle, center
 
+#Sex
+
+```{r sex, echo= FALSE}
+student_por_sex <- student_por %>% 
+  select(sex, Talc) %>% 
+  group_by(sex) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_sex %>%
+  ggplot(mapping = aes(x = sex, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Sex", 
+    x = "Sex", 
+    y = "Average Total Alcohol Consumption"
+  )
+
+
+```
+
+---
+
+# Age
+```{r age, echo=FALSE, warning=FALSE}
+
+student_por %>%
+  ggplot(aes(x=age, y=Talc)) +
+  geom_jitter() +
+  geom_smooth()
+
+```
+
+---
+
+
+#Reason
+```{r reason, echo=FALSE}
+student_por_reason <- student_por %>% 
+  select(reason, Talc) %>% 
+  group_by(reason) %>%
+  summarise(average_talc = mean(Talc))
+
+student_por_reason %>%
+  ggplot(mapping = aes(x = reason, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Reason for Joining School", 
+    x = "Reason", 
+    y = "Average Total Alcohol Consumption"
+  )
+
+```
+---
+
+# Parent Cohabitation
+
+```{r Pstatus, echo=FALSE, warning=FALSE}
+student_por_Pstatus <- student_por %>% 
+  select(Pstatus, Talc) %>% 
+  group_by(Pstatus) %>%
+  summarise(average_talc = mean(Talc))
+
+
+student_por_Pstatus %>%
+  ggplot(mapping = aes(x = Pstatus, y = average_talc)) +
+  geom_col() +
+  labs(
+    title = "Average Total Alcohol Consumption By Parental Cohabitation Status", 
+    x = "Cohabitation Status", 
+    y = "Average Total Alcohol Consumption"
+  )
+```
+---
+---
 # First attempt 
+  
 
 ---
 
