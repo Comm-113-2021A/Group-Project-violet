@@ -30,313 +30,105 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 ```
 
 ```{r load-data, include=FALSE}
-# Load your data here
+student_por <- read.csv("../data/student-por.csv")
+
+student_por <- student_por %>% mutate(Talc=(2/7*(Walc)+5/7*(Dalc)),
+       Alcoholism = if_else(Talc < 3, 0, 1),
+       Alcoholism = factor(Alcoholism))
 ```
 
-```{r}
+```{r, include = FALSE}
 style_xaringan(
   title_slide_background_image = "presentation/img/confetti.jpg"
 )
 ```
 
 
-class: center, middle
+class: left, middle
 
 ## A statement of the overall goal / research question
 
 The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcoholism.
-
-class: inverse, center, middle
-
-# Section title
-
 ---
 
-# Hello World
+# Alcoholism in Students
 
-```{r load_data-make-cols}
-student_por <- read.csv("../data/student-por.csv")
-
-student_por <- student_por %>% mutate(Talc=(2/7*(Walc)+5/7*(Dalc)),
-       Alcoholism = if_else(Talc < 3, 0, 1),
-       Alcoholism = factor(Alcoholism))
-
-```
-
-```{r alcoholism-counts}
-student_por %>%
+```{r alcoholism-counts, eval = TRUE, echo = FALSE}
+count <- student_por %>%
   group_by(Alcoholism) %>%
   count()
 
-student_mat %>%
-  group_by(Alcoholism) %>%
-  count()
+count
+
+# student_mat %>%
+#   group_by(Alcoholism) %>%
+#   count()
 ```
 
-```{r EDA_Aamir}
-student_por %>% group_by(sex) %>% summarise(mean=mean(Talc))
-
-student_por %>% 
-  ggplot(aes(x=Talc, y=health)) +
-  geom_jitter() + geom_smooth()
-
-student_por %>% 
-  ggplot(aes(x=Medu, y=Talc)) + 
-  geom_jitter() + 
-  geom_smooth()
-
-student_por %>% 
-  ggplot(aes(x=Fedu, y=Talc)) + 
-  geom_jitter() + 
-  geom_smooth()
-  
-student_por %>%
-  ggplot(aes(x=Talc, fill=sex)) +
-  geom_histogram(binwidth = .25)
-
-student_por %>%
-  ggplot(aes(x=age, y=Talc)) +
-  geom_jitter() +
-  geom_smooth()
-
-student_por %>%
-  group_by(Mjob) %>%
-  summarise(mean=mean(Talc))
-
-student_por %>%
-  group_by(Fjob) %>%
-  summarise(mean=mean(Talc))
-
-```
-
-
-Visualizing school
-
-```{r school, eval = TRUE}
-student_por_school <- student_por %>% 
-  select(school, Talc) %>% 
-  group_by(school) %>%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_school %>%
-  ggplot(mapping = aes(x = school, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By School", 
-    x = "School", 
-    y = "Average Total Alcohol Consumption"
-  )
-
-```
-
-There does not appear to be a siginificant difference between schools.
+Roughly `r round(count[2, 2] / (count[1, 2] + count[2, 2]) * 100, 2)`% of students have a total alcohol consumption higher than 3 (out of a max of 5).
 ---
-Visualizing Sex
+class: inverse, middle, center
 
-```{r sex, eval = TRUE}
-student_por_sex <- student_por %>% 
-  select(sex, Talc) %>% 
-  group_by(sex) %>%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_sex %>%
-  ggplot(mapping = aes(x = sex, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Sex", 
-    x = "Sex", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-Males seem to drink more, on average, than females. 
----
-Visualizing age
-
-```{r age, eval = TRUE}
-student_por_age <- student_por %>% 
-  select(age, Talc)
-
-  
-student_por_age %>%
-  ggplot(mapping = aes(x = age, y = Talc)) +
-  geom_jitter() +
-  labs(
-    title = "Age vs Total Alcohol Consumption", 
-    x = "Age", 
-    y = "Total Alcohol Consumption"
-  )
-```
-
-There does not seem to be a correlation between age and total alcohol consumption. 
+# First attempt 
 
 ---
-Visualizing Address
 
-```{r address, eval = TRUE}
-student_por_address <- student_por %>% 
-  select(address, Talc) %>% 
-  group_by(address) %>%
-  summarise(average_talc = mean(Talc))
+# Linear Model
 
+We first attempted to create a linear regression model to predict total alcohol consumption with variables we suspected to be associated with total alcohol consumption based on visualizations. 
 
-student_por_address %>%
-  ggplot(mapping = aes(x = address, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Address", 
-    x = "Address", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-There does not seem to be a significant difference between average alchol consumption between rural and urban highschools. 
-
----
-Visualizing Family Size
-
-```{r famsize, eval = TRUE}
-student_por_famsize <- student_por %>% 
-  select(famsize, Talc) %>% 
-  group_by(famsize) %>%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_famsize %>%
-  ggplot(mapping = aes(x = famsize, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Family Size", 
-    x = "Family Size", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-There does not appear to be a significant difference between average alcohol consumption and family size. 
-
----
-Visualizing Parent's Cohabitation Status
-
-```{r Pstatus, eval = TRUE}
-student_por_Pstatus <- student_por %>% 
-  select(Pstatus, Talc) %>% 
-  group_by(Pstatus) %>%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_Pstatus %>%
-  ggplot(mapping = aes(x = Pstatus, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Parental Cohabitation Status", 
-    x = "Cohabitation Status", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-Highschoolers with parents who live together have a higher average total alcohol consumption value, than those whose parents live apart. 
----
-Visualizing Mother's Education 
-
-```{r Medu, eval = TRUE}
-student_por_Medu <- student_por %>% 
-  select(Medu, Talc)
-
-
-student_por_Medu %>%
-  ggplot(mapping = aes(x = Medu, y = Talc)) +
-  geom_jitter() +
-  labs(
-    title = "Mothers Education vs Average Total Alcohol Consumption", 
-    x = "Mother's Education", 
-    y = "Total Alcohol Consumption"
-  )
-```
-There does not seem to be a relationship between mother's education and total alcohol consumption.
----
-Visualizing Father's Education 
-
-```{r Fedu, eval = TRUE}
-student_por_Fedu <- student_por %>% 
-  select(Fedu, Talc)
-
-
-student_por_Fedu %>%
-  ggplot(mapping = aes(x = Fedu, y = Talc)) +
-  geom_jitter() +
-  labs(
-    title = "Father's Education vs Average Total Alcohol Consumption", 
-    x = "Father's Education", 
-    y = "Total Alcohol Consumption"
-  )
-```
-There does not seem to be a relationship between father's education and total alcohol consumption.
-
----
-Visualizing Mother's Job
-
-```{r Mjob, eval = TRUE}
-student_por_Mjob <- student_por %>% 
-  select(Mjob, Talc) %>% 
-  group_by(Mjob) %>%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_Mjob %>%
-  ggplot(mapping = aes(x = Mjob, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Mother's Job", 
-    x = "Mother's Job", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-High schoolers with mothers who work in health care have the lowest average alcohol consumption, while those with mothers who work in civil services have the highest. 
-
----
-Visualizing Father's Job
-
-```{r Fjob, eval = TRUE}
-student_por_Fjob <- student_por %>% 
-  select(Fjob, Talc) %>% 
-  group_by(Fjob) %>%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_Fjob %>%
-  ggplot(mapping = aes(x = Fjob, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Father's Job", 
-    x = "Father's Job", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-High schoolers whose fathers are teachers have the lowest total alcohol consumption while those with fathers in civil service jobs have the highest. 
-
----
-Visualizing Reason Job
-
-```{r reason, eval = TRUE}
-student_por_reason <- student_por %>% 
-  select(reason, Talc) %>% 
-  group_by(reason) %>%
-  summarise(average_talc = mean(Talc))
-
-student_por_reason %>%
-  ggplot(mapping = aes(x = reason, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Reason for Joining School", 
-    x = "Reason", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-High schoolers who choose their school based on reputation have the lowest total alohol consumption while those who choose for reasons besides courses, closeness to home, and reputation, have the highest. 
----
-
-
-```{r linear_reg}
+.pull-left[
+```{r new_model}
 lin_model <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(Talc ~ school +
+        age + 
+        failures + 
+        freetime + 
+        sex +
+        Fjob + 
+        Mjob +
+        reason + 
+        studytime +
+        famsup +
+        goout +
+        health +
+        absences, data = student_por)
+```
+]
+.pull-right[
+```{r} 
+tidy(lin_model)
+```
+]
+
+---
+--- 
+
+# Residual Plot
+
+.pull-left[
+The residual plot shows obvious problems, as there are distinct negatively sloped lines in the plot.
+This may mean that the prediction confidence may be too low, and a artificially low standard error.
+]
+
+.pull-right[
+```{r resid, out.width="100%", fig.width=5, echo = FALSE}
+aug <- augment(lin_model$fit)
+
+aug %>%
+  ggplot(mapping = aes(x = .fitted, y = .resid)) +
+  geom_jitter() + 
+  geom_hline(yintercept = 0)
+```
+]
+
+---
+
+# Residual Plot Two
+
+```{r linear_reg, echo=FALSE}
+lin_model_all <- linear_reg() %>%
   set_engine("lm") %>%
   fit(Talc ~ school +
         sex +
@@ -366,17 +158,41 @@ lin_model <- linear_reg() %>%
         goout +
         health +
         absences, data = student_por)
-
-line_tidy <- tidy(lin_model) %>% 
-  filter(p.value < 0.05)
-
-line_tidy
 ```
 
-```{r new_model}
-lin_model2 <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(Talc ~ school +
+.pull-left[
+A residual plot of the logistic model with all variables as predictors shows the same trends as the previous one.
+]
+
+.pull-right[
+```{r resid-all, out.width="100%", fig.width=5, echo = FALSE}
+aug2 <- augment(lin_model_all$fit)
+
+aug2 %>%
+  ggplot(mapping = aes(x = .fitted, y = .resid)) +
+  geom_jitter() + 
+  geom_hline(yintercept = 0)
+```
+]
+
+---
+
+class: inverse, middle, center
+
+# Attempt Two
+
+---
+
+# Logistic Model
+
+A linear model does not work, so we moved to a logistic model to predict alcoholism in students. 
+A student is an Alcoholic if they have a total alcohol consumption greater than three. 
+
+.pull-left[
+```{r logit-model}
+alcoholism_fit <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(Alcoholism ~ school +
         age + 
         failures + 
         freetime + 
@@ -390,6 +206,16 @@ lin_model2 <- linear_reg() %>%
         health +
         absences, data = student_por)
 ```
+]
+
+.pull-right[
+```{r} 
+tidy(alcoholism_fit)
+```
+]
+---
+
+*********** END OF FORMATTING BELOW HERE IS PREVIOUS TRAINNING WITH LINEAR MODEL AND XARGAIN STYLE *********** 
 
 ```{r test_train_data}
 student_por2 <- student_por %>%
@@ -445,36 +271,6 @@ ggplot(data = student_por_train_pred, aes(x=Talc, y=.pred)) +
   geom_smooth()
 
 
-```
-
-```{r resid}
-aug <- augment(lin_model2$fit)
-
-aug %>%
-  ggplot(mapping = aes(x = .fitted, y = .resid)) +
-  geom_jitter() + 
-  geom_hline(yintercept = 0)
-```
-Note limitation - prediction confidence may be too low, std error artificially low
-
-```{r logit-model}
-alcoholism_fit <- logistic_reg() %>%
-  set_engine("glm") %>%
-  fit(Alcoholism ~ school +
-        age + 
-        failures + 
-        freetime + 
-        sex +
-        Fjob + 
-        Mjob +
-        reason + 
-        studytime +
-        famsup +
-        goout +
-        health +
-        absences, data = student_por)
-
-tidy(alcoholism_fit)
 ```
 
 ---

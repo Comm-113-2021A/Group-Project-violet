@@ -4,7 +4,7 @@
     <title>Factors of Alcoholism</title>
     <meta charset="utf-8" />
     <meta name="author" content="Team Violet" />
-    <meta name="date" content="2021-04-27" />
+    <meta name="date" content="2021-04-28" />
     <script src="libs/header-attrs-2.7/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Factors of Alcoholism
 ## in teens
 ### Team Violet
-### 2021-04-27
+### 2021-04-28
 
 ---
 
@@ -27,317 +27,43 @@ class: center, middle, inverse, title-slide
 
 
 
-```r
-style_xaringan(
-  title_slide_background_image = "presentation/img/confetti.jpg"
-)
-```
 
 
-class: center, middle
+class: left, middle
 
 ## A statement of the overall goal / research question
 
 The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcoholism.
-
-class: inverse, center, middle
-
-# Section title
-
 ---
 
-# Hello World
+# Alcoholism in Students
 
-
-```r
-student_por &lt;- read.csv("../data/student-por.csv")
-
-ncol(student_por)
-```
-
-```
-## [1] 33
-```
-
-```r
-student_por &lt;- student_por %&gt;% mutate(Talc=(2/7*(Walc)+5/7*(Dalc)))
-```
-
-
-```r
-student_por %&gt;% group_by(sex) %&gt;% summarise(mean=mean(Talc))
-```
 
 ```
 ## # A tibble: 2 x 2
-##   sex    mean
-## * &lt;chr&gt; &lt;dbl&gt;
-## 1 F      1.47
-## 2 M      2.09
+## # Groups:   Alcoholism [2]
+##   Alcoholism     n
+##   &lt;fct&gt;      &lt;int&gt;
+## 1 0            574
+## 2 1             75
 ```
 
-```r
-student_por %&gt;% 
-  ggplot(aes(x=Talc, y=health)) +
-  geom_jitter() + geom_smooth()
-```
+Roughly 11.56% of students have a total alcohol consumption higher than 3 (out of a max of 5).
+---
+class: inverse, middle, center
 
-```
-## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-```
+# First attempt 
 
-&lt;img src="presentation_files/figure-html/EDA_Aamir-1.png" width="80%" /&gt;
+---
 
-```r
-student_por %&gt;% 
-  ggplot(aes(x=Medu, y=Talc)) + 
-  geom_jitter() + 
-  geom_smooth()
-```
+# Linear Model
 
-```
-## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-```
+We first attempted to create a linear regression model to predict total alcohol consumption with variables we suspected to be associated with total alcohol consumption based on visualizations. 
 
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : pseudoinverse used at 4.02
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : neighborhood radius 2.02
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : reciprocal condition number 1.8282e-15
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : There are other near singularities as well. 1
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : pseudoinverse used at
-## 4.02
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : neighborhood radius 2.02
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : reciprocal condition
-## number 1.8282e-15
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : There are other near
-## singularities as well. 1
-```
-
-&lt;img src="presentation_files/figure-html/EDA_Aamir-2.png" width="80%" /&gt;
-
-```r
-student_por %&gt;% 
-  ggplot(aes(x=Fedu, y=Talc)) + 
-  geom_jitter() + 
-  geom_smooth()
-```
-
-```
-## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : pseudoinverse used at 2
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : neighborhood radius 1
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : reciprocal condition number 0
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : pseudoinverse used at 2
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : neighborhood radius 1
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : reciprocal condition
-## number 0
-```
-
-&lt;img src="presentation_files/figure-html/EDA_Aamir-3.png" width="80%" /&gt;
-
-```r
-student_por %&gt;%
-  ggplot(aes(x=Talc, fill=sex)) +
-  geom_histogram(binwidth = .25)
-```
-
-&lt;img src="presentation_files/figure-html/EDA_Aamir-4.png" width="80%" /&gt;
-
-```r
-student_por %&gt;%
-  ggplot(aes(x=age, y=Talc)) +
-  geom_jitter() +
-  geom_smooth()
-```
-
-```
-## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : pseudoinverse used at 17
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : neighborhood radius 1
-```
-
-```
-## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
-## parametric, : reciprocal condition number 0
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : pseudoinverse used at 17
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : neighborhood radius 1
-```
-
-```
-## Warning in predLoess(object$y, object$x, newx = if
-## (is.null(newdata)) object$x else if (is.data.frame(newdata))
-## as.matrix(model.frame(delete.response(terms(object)), : reciprocal condition
-## number 0
-```
-
-&lt;img src="presentation_files/figure-html/EDA_Aamir-5.png" width="80%" /&gt;
-
-```r
-student_por %&gt;%
-  group_by(Mjob) %&gt;%
-  summarise(mean=mean(Talc))
-```
-
-```
-## # A tibble: 5 x 2
-##   Mjob      mean
-## * &lt;chr&gt;    &lt;dbl&gt;
-## 1 at_home   1.71
-## 2 health    1.58
-## 3 other     1.68
-## 4 services  1.83
-## 5 teacher   1.79
-```
-
-```r
-student_por %&gt;%
-  group_by(Fjob) %&gt;%
-  summarise(mean=mean(Talc))
-```
-
-```
-## # A tibble: 5 x 2
-##   Fjob      mean
-## * &lt;chr&gt;    &lt;dbl&gt;
-## 1 at_home   1.56
-## 2 health    1.68
-## 3 other     1.69
-## 4 services  1.88
-## 5 teacher   1.54
-```
+.pull-left[
 
 ```r
 lin_model &lt;- linear_reg() %&gt;%
-  set_engine("lm") %&gt;%
-  fit(Talc ~ school +
-        sex +
-        age + 
-        address + 
-        famsize + 
-        Pstatus + 
-        Medu +
-        Fedu +
-        Mjob + 
-        Fjob + 
-        reason +
-        guardian +
-        traveltime +
-        studytime +
-        failures +
-        schoolsup +
-        famsup +
-        paid +
-        activities +
-        nursery +
-        higher +
-        internet +
-        romantic +
-        famrel +
-        freetime +
-        goout +
-        health +
-        absences, data = student_por)
-
-line_tidy &lt;- tidy(lin_model) %&gt;% 
-  filter(p.value &lt; 0.05)
-
-line_tidy
-```
-
-```
-## # A tibble: 8 x 5
-##   term         estimate std.error statistic  p.value
-##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 sexM           0.520    0.0713       7.29 9.54e-13
-## 2 Fjobservices   0.307    0.142        2.16 3.13e- 2
-## 3 reasonother    0.303    0.109        2.78 5.52e- 3
-## 4 studytime     -0.0847   0.0414      -2.05 4.11e- 2
-## 5 famrel        -0.143    0.0340      -4.22 2.79e- 5
-## 6 goout          0.244    0.0294       8.29 6.96e-16
-## 7 health         0.0505   0.0228       2.21 2.74e- 2
-## 8 absences       0.0250   0.00735      3.41 6.92e- 4
-```
-
-```r
-lin_model2 &lt;- linear_reg() %&gt;%
   set_engine("lm") %&gt;%
   fit(Talc ~ school +
         age + 
@@ -353,6 +79,119 @@ lin_model2 &lt;- linear_reg() %&gt;%
         health +
         absences, data = student_por)
 ```
+]
+.pull-right[
+
+```r
+tidy(lin_model)
+```
+
+```
+## # A tibble: 22 x 5
+##    term         estimate std.error statistic  p.value
+##    &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)   -0.489     0.522     -0.938 3.49e- 1
+##  2 schoolMS       0.0736    0.0744     0.989 3.23e- 1
+##  3 age            0.0603    0.0286     2.11  3.55e- 2
+##  4 failures       0.0328    0.0594     0.553 5.80e- 1
+##  5 freetime      -0.0177    0.0332    -0.533 5.94e- 1
+##  6 sexM           0.537     0.0694     7.73  4.20e-14
+##  7 Fjobhealth     0.168     0.222      0.756 4.50e- 1
+##  8 Fjobother      0.111     0.135      0.820 4.13e- 1
+##  9 Fjobservices   0.298     0.142      2.10  3.60e- 2
+## 10 Fjobteacher   -0.0533    0.193     -0.277 7.82e- 1
+## # … with 12 more rows
+```
+]
+
+---
+--- 
+
+# Residual Plot
+
+.pull-left[
+The residual plot shows obvious problems, as there are distinct negatively sloped lines in the plot.
+This may mean that the prediction confidence may be too low, and on artificially low standard error.
+]
+
+.pull-right[
+&lt;img src="presentation_files/figure-html/resid-1.png" width="100%" /&gt;
+]
+
+---
+
+# Residual Plot Two
+
+
+
+.pull-left[
+A residual plot of the logistic model with all variables as predictors (`lin_model_all`) shows the same trends as the previous one.
+]
+
+.pull-right[
+&lt;img src="presentation_files/figure-html/resid-all-1.png" width="100%" /&gt;
+]
+
+---
+
+class: inverse, middle, center
+
+# Attempt Two
+
+---
+
+# Logistic Model
+
+A linear model does not work, so we moved to a logistic model to predict alcoholism in students. 
+A student is an Alcoholic if they have a total alcohol consumption greater than three. 
+
+.pull-left[
+
+```r
+alcoholism_fit &lt;- logistic_reg() %&gt;%
+  set_engine("glm") %&gt;%
+  fit(Alcoholism ~ school +
+        age + 
+        failures + 
+        freetime + 
+        sex +
+        Fjob + 
+        Mjob +
+        reason + 
+        studytime +
+        famsup +
+        goout +
+        health +
+        absences, data = student_por)
+```
+]
+
+.pull-right[
+
+```r
+tidy(alcoholism_fit)
+```
+
+```
+## # A tibble: 22 x 5
+##    term         estimate std.error statistic    p.value
+##    &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+##  1 (Intercept)   -9.81       2.35     -4.17  0.0000308 
+##  2 schoolMS       0.387      0.319     1.21  0.225     
+##  3 age            0.238      0.123     1.94  0.0528    
+##  4 failures       0.246      0.210     1.17  0.242     
+##  5 freetime      -0.0323     0.140    -0.231 0.817     
+##  6 sexM           1.49       0.311     4.80  0.00000161
+##  7 Fjobhealth     0.716      1.02      0.702 0.483     
+##  8 Fjobother      0.309      0.688     0.450 0.653     
+##  9 Fjobservices   0.912      0.700     1.30  0.193     
+## 10 Fjobteacher   -0.452      1.05     -0.431 0.666     
+## # … with 12 more rows
+```
+]
+---
+
+*********** END OF FORMATTING BELOW HERE IS PREVIOUS TRAINNING WITH LINEAR MODEL AND XARGAIN STYLE *********** 
 
 
 ```r
@@ -474,282 +313,6 @@ ggplot(data = student_por_train_pred, aes(x=Talc, y=.pred)) +
 
 &lt;img src="presentation_files/figure-html/test_train_data-1.png" width="80%" /&gt;
 
-```
-
-
-```r
-aug &lt;- augment(lin_model2$fit)
-
-aug %&gt;%
-  ggplot(mapping = aes(x = .fitted, y = .resid)) +
-  geom_jitter() + 
-  geom_hline(yintercept = 0)
-```
-
-&lt;img src="presentation_files/figure-html/resid-1.png" width="80%" /&gt;
-Note limitation - prediction confidence may be too low, std error artificially low
-
-
-Visualizing school
-
-
-```r
-student_por_school &lt;- student_por %&gt;% 
-  select(school, Talc) %&gt;% 
-  group_by(school) %&gt;%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_school %&gt;%
-  ggplot(mapping = aes(x = school, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By School", 
-    x = "School", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/school-1.png" width="80%" /&gt;
-
-There does not appear to be a siginificant difference between schools.
----
-Visualizing Sex
-
-
-```r
-student_por_sex &lt;- student_por %&gt;% 
-  select(sex, Talc) %&gt;% 
-  group_by(sex) %&gt;%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_sex %&gt;%
-  ggplot(mapping = aes(x = sex, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Sex", 
-    x = "Sex", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/sex-1.png" width="80%" /&gt;
-
-Males seem to drink more, on average, than females. 
----
-Visualizing age
-
-
-```r
-student_por_age &lt;- student_por %&gt;% 
-  select(age, Talc)
-
-  
-student_por_age %&gt;%
-  ggplot(mapping = aes(x = age, y = Talc)) +
-  geom_jitter() +
-  labs(
-    title = "Age vs Total Alcohol Consumption", 
-    x = "Age", 
-    y = "Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/age-1.png" width="80%" /&gt;
-
-There does not seem to be a correlation between age and total alcohol consumption. 
-
----
-Visualizing Address
-
-
-```r
-student_por_address &lt;- student_por %&gt;% 
-  select(address, Talc) %&gt;% 
-  group_by(address) %&gt;%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_address %&gt;%
-  ggplot(mapping = aes(x = address, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Address", 
-    x = "Address", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/address-1.png" width="80%" /&gt;
-There does not seem to be a significant difference between average alchol consumption between rural and urban highschools. 
-
----
-Visualizing Family Size
-
-
-```r
-student_por_famsize &lt;- student_por %&gt;% 
-  select(famsize, Talc) %&gt;% 
-  group_by(famsize) %&gt;%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_famsize %&gt;%
-  ggplot(mapping = aes(x = famsize, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Family Size", 
-    x = "Family Size", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/famsize-1.png" width="80%" /&gt;
-There does not appear to be a significant difference between average alcohol consumption and family size. 
-
----
-Visualizing Parent's Cohabitation Status
-
-
-```r
-student_por_Pstatus &lt;- student_por %&gt;% 
-  select(Pstatus, Talc) %&gt;% 
-  group_by(Pstatus) %&gt;%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_Pstatus %&gt;%
-  ggplot(mapping = aes(x = Pstatus, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Parental Cohabitation Status", 
-    x = "Cohabitation Status", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/Pstatus-1.png" width="80%" /&gt;
-Highschoolers with parents who live together have a higher average total alcohol consumption value, than those whose parents live apart. 
----
-Visualizing Mother's Education 
-
-
-```r
-student_por_Medu &lt;- student_por %&gt;% 
-  select(Medu, Talc)
-
-
-student_por_Medu %&gt;%
-  ggplot(mapping = aes(x = Medu, y = Talc)) +
-  geom_jitter() +
-  labs(
-    title = "Mothers Education vs Average Total Alcohol Consumption", 
-    x = "Mother's Education", 
-    y = "Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/Medu-1.png" width="80%" /&gt;
-There does not seem to be a relationship between mother's education and total alcohol consumption.
----
-Visualizing Father's Education 
-
-
-```r
-student_por_Fedu &lt;- student_por %&gt;% 
-  select(Fedu, Talc)
-
-
-student_por_Fedu %&gt;%
-  ggplot(mapping = aes(x = Fedu, y = Talc)) +
-  geom_jitter() +
-  labs(
-    title = "Father's Education vs Average Total Alcohol Consumption", 
-    x = "Father's Education", 
-    y = "Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/Fedu-1.png" width="80%" /&gt;
-There does not seem to be a relationship between father's education and total alcohol consumption.
-
----
-Visualizing Mother's Job
-
-
-```r
-student_por_Mjob &lt;- student_por %&gt;% 
-  select(Mjob, Talc) %&gt;% 
-  group_by(Mjob) %&gt;%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_Mjob %&gt;%
-  ggplot(mapping = aes(x = Mjob, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Mother's Job", 
-    x = "Mother's Job", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/Mjob-1.png" width="80%" /&gt;
-High schoolers with mothers who work in health care have the lowest average alcohol consumption, while those with mothers who work in civil services have the highest. 
-
----
-Visualizing Father's Job
-
-
-```r
-student_por_Fjob &lt;- student_por %&gt;% 
-  select(Fjob, Talc) %&gt;% 
-  group_by(Fjob) %&gt;%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_Fjob %&gt;%
-  ggplot(mapping = aes(x = Fjob, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Father's Job", 
-    x = "Father's Job", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/Fjob-1.png" width="80%" /&gt;
-High schoolers whose fathers are teachers have the lowest total alcohol consumption while those with fathers in civil service jobs have the highest. 
-
----
-Visualizing Reason Job
-
-
-```r
-student_por_reason &lt;- student_por %&gt;% 
-  select(reason, Talc) %&gt;% 
-  group_by(reason) %&gt;%
-  summarise(average_talc = mean(Talc))
-
-
-student_por_reason %&gt;%
-  ggplot(mapping = aes(x = reason, y = average_talc)) +
-  geom_col() +
-  labs(
-    title = "Average Total Alcohol Consumption By Reason for Joining School", 
-    x = "Reason", 
-    y = "Average Total Alcohol Consumption"
-  )
-```
-
-&lt;img src="presentation_files/figure-html/reason-1.png" width="80%" /&gt;
-High schoolers who choose their school based on reputation have the lowest total alohol consumption while those who choose for reasons besides courses, closeness to home, and reputation, have the highest. 
----
-- Click the `Knit` button to compile your presentation
-
-- Make sure to commit and push all resulting files to your GitHub repo
-
 ---
 
 class: inverse, middle, center
@@ -836,7 +399,7 @@ glance(model)
 - goes here
 ]
 .pull-right[
-&lt;img src="presentation_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-4-1.png" width="100%" /&gt;
 ]
 
 ---
@@ -923,7 +486,7 @@ background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e69
 You can write LaTeX math expressions inside a pair of dollar signs, e.g. &amp;#36;\alpha+\beta$ renders `\(\alpha+\beta\)`. You can use the display style with double dollar signs:
 
 ```
-`$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$`
+$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
 ```
 
 `$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$`
