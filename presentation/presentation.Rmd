@@ -257,7 +257,7 @@ aug2 %>%
 
 class: inverse, middle, center
 
-# Attempt Two
+# Attempt: Logistic Models
 
 ---
 
@@ -291,7 +291,6 @@ alcoholism_fit <- logistic_reg() %>%
 tidy(alcoholism_fit)
 ```
 ]
----
 ---
 
 class: inverse, middle, center
