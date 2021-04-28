@@ -2,8 +2,14 @@
 title: "Visualizations"
 output: html_document
 ---
+```{r packages}
+library(tidyverse)
+```
+
 ```{r EDA_Aamir}
-student_por %>% group_by(sex) %>% summarise(mean=mean(Talc))
+student_por %>% 
+  group_by(sex) %>% 
+  summarise(mean=mean(Talc))
 
 student_por %>% 
   ggplot(aes(x=Talc, y=health)) +

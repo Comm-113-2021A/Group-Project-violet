@@ -214,6 +214,33 @@ tidy(alcoholism_fit)
 ```
 ]
 ---
+---
+
+class: inverse, middle, center
+
+# Discussion
+
+---
+
+# Implications
+
+
+
+---
+
+# Limitations
+
+Some of the limitations within in our data analysis and results:
+
+1. For the logistic model, the model would have been more accurate if there were more individuals who fell under the Alcoholism factor '1'.
+
+2. The sample was only based on individuals in secondary school taking Portuguese language courses and the school itself is in Portugal. Thus the model should be carefully interpreted for those outside of this demographic.
+
+3. Given the sample was taken within the same school, it is possible that there is slightly non-independence among the observations due to factors like peer pressure.
+
+4. The data set was also independently sourced from https://www.kaggle.com/uciml/student-alcohol-consumption/discussion/206577, and relied on self-reporting alcohol consumption factors.
+
+---
 
 *********** END OF FORMATTING BELOW HERE IS PREVIOUS TRAINNING WITH LINEAR MODEL AND XARGAIN STYLE *********** 
 
