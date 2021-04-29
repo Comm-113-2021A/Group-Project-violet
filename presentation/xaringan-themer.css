@@ -44,17 +44,17 @@
 
   /* Colors */
   --text-color: #000;
-  --header-color: #000;
+  --header-color: #23395D;
   --background-color: #FFF;
   --link-color: rgb(249, 38, 114);
   --code-highlight-color: rgba(255,255,0,0.5);
-  --inverse-text-color: #d6d6d6;
-  --inverse-background-color: #272822;
-  --inverse-header-color: #f3f3f3;
+  --inverse-text-color: #23395D;
+  --inverse-background-color: #23395D;
+  --inverse-header-color: #FFF;
   --inverse-link-color: rgb(249, 38, 114);
-  --title-slide-background-color: #272822;
-  --title-slide-text-color: #d6d6d6;
-  --header-background-color: #000;
+  --title-slide-background-color: #23395D;
+  --title-slide-text-color: #cbf7ed;
+  --header-background-color: #23395D;
   --header-background-text-color: #FFF;
 }
 
@@ -99,7 +99,7 @@ h1, h2, h3 {
   color: #000;
 }
 .remark-slide-number {
-  color: #272822;
+  color: #23395D;
   opacity: 1;
   font-size: 0.9em;
 }
@@ -132,7 +132,7 @@ a, a > code {
 }
 .title-slide {
   background-color: var(--title-slide-background-color);
-  background-image: url("presentation/img/confetti.jpg");
+  background-image: url("title.png");
   background-size: cover;
 }
 .title-slide .remark-slide-number {

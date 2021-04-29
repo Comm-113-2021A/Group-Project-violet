@@ -1,6 +1,6 @@
 ---
-title: "Factors of Alcoholism"
-subtitle: "in teens"
+title: "Factors of Alcoholism In Teens"
+subtitle: ""
 author: "Team Violet"
 date: "`r Sys.Date()`"
 output:
@@ -19,9 +19,9 @@ output:
 library(tidyverse)
 library(tidymodels)
 library(knitr)
-library(xaringanthemer)
 library(palmerpenguins)
 library(showtext)
+library(xaringanthemer)
 ```
 
 ```{r setup, include=FALSE}
@@ -37,18 +37,24 @@ student_por <- student_por %>% mutate(Talc=(2/7*(Walc)+5/7*(Dalc)),
        Alcoholism = factor(Alcoholism))
 ```
 
-```{r, include = FALSE}
+```{r xaringan-stuff, echo = FALSE}
 style_xaringan(
-  title_slide_background_image = "presentation/img/confetti.jpg"
+  title_slide_background_image = "title.png",
+  title_slide_text_color = "#FFF",
+  header_color = "#23395D",
+  inverse_background_color = "#23395D",
+  inverse_text_color = "#23395D",
+  inverse_header_color = "#FFF"
 )
 ```
 
 
 class: left, middle
 
-## A statement of the overall goal / research question
+## Overall Goal and Basic Research Question
 
 The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcoholism.
+
 ---
 
 # Alcoholism in Students
@@ -65,7 +71,7 @@ count
 #   count()
 ```
 
-Roughly `r round(count[2, 2] / (count[1, 2] + count[2, 2]) * 100, 2)`% of students have a total alcohol consumption higher than 3 (out of a max of 5).
+Roughly `r round(count[2, 2] / (count[1, 2] + count[2, 2]) * 100, 2)`% of students have a total alcohol consumption higher than or equal to 3 (out of a max of 5).
 ---
 
 #Sex
@@ -155,11 +161,12 @@ We first attempted to create a linear regression model to predict total alcohol 
 
 The following equation was established from our initial model: 
 
-$$\hat{Total Alcohol Level} = 0.07(MS School) +0.06(Age)+0.03(failures)-0.02(Free time)+0.54(Male)+$$
+$$\hat{Total Alcohol Level} = 0.07(MS School) +0.06(Age)+0.03(Failures)-0.02(Free time)+0.54(Male)+$$
 $$0.17(FatherJobHealth)+0.11(FatherJobOther)+0.30(FatherJobService)-0.05(FatherJobTeacher)-$$
 $$0.24(MotherJobHealth)-0.09(MotherJobOther)-0.04(MotherJobService)+0.05(MotherJobTeacher)+$$
 $$0.12(ReasonHome)+0.29(ReasonOther)+0.005(ReasonReputation)-0.081(StudyTime)+$$
-$$0.03(FamilySupportYes)+0.23(GoingOut)+0.04(Health)+0.03(Absences)$$
+$$0.03(FamilySupportYes)+0.23(GoingOut)+0.04(Health)+0.03(Absences)-0.49$$
+This model indicates that holding all other variables constant, a change in one of them would be a change in predicted Total Alcohol level by the related coefficient. The intercept would not be interpretable in this context.
 
 .pull-left[
 ```{r new_model, echo = FALSE}
@@ -183,7 +190,7 @@ lin_model <- linear_reg() %>%
 
 ---
 
-# Residual Plot
+# Residual Plot One
 
 .pull-left[
 The residual plot shows obvious problems, as there are distinct negatively sloped lines in the plot.
@@ -239,7 +246,7 @@ lin_model_all <- linear_reg() %>%
 ```
 
 .pull-left[
-A residual plot of the logistic model with all variables as predictors shows the same trends as the previous one.
+A residual plot of the logistic model with all variables as predictors shows the same trends as the previous one. This further supports the fact that a linear model would be inapporpiate in this setting.
 ]
 
 .pull-right[
@@ -264,10 +271,19 @@ class: inverse, middle, center
 # Logistic Model
 
 A linear model does not work, so we moved to a logistic model to predict alcoholism in students. 
-A student is an Alcoholic if they have a total alcohol consumption greater than three. 
+A student is an Alcoholic if they have a total alcohol consumption greater than or equal to three.
+
+From the regression, the following model was generated:
+
+$$\hat{log(alcoholism)} = 0.39(MSSchool)+0.24(Age)+0.25(Faillures)-0.03(Freetime)+1.49(Male)+$$
+$$0.72(FatherJobHealth)+0.31(FatherJobOther)+0.91(FatherJobService)-0.45(FatherJobTeacher)-$$
+$$0.83(MotherJobHealth)-0.10(MotherJobOther)-0.33(MotherJobService)+0.41(MotherJobTeacher)+$$
+$$0.51(ReasonHome)+0.93(ReasonOther)+0.21(ReasonReputation)-0.21(StudyTime)-$$
+$$0.06(FamilySupportYes)+0.54(GoingOut)+0.10(Health)+0.07(Absences)-9.8$$
+This model indicates that holding all other factors constant, an increase in one of the variables would result in the log of the odds of being alcoholic by a factor of the related coefficient.
 
 .pull-left[
-```{r logit-model}
+```{r logit-model, echo = FALSE}
 alcoholism_fit <- logistic_reg() %>%
   set_engine("glm") %>%
   fit(Alcoholism ~ school +
@@ -286,11 +302,18 @@ alcoholism_fit <- logistic_reg() %>%
 ```
 ]
 
-.pull-right[
-```{r} 
-tidy(alcoholism_fit)
+---
+
+# Assessing Logistic Model #1
+
+```{r}
 ```
-]
+
+```{r}
+```
+
+
+
 ---
 
 class: inverse, middle, center
@@ -301,7 +324,11 @@ class: inverse, middle, center
 
 # Implications
 
+The logistic modeling indicated:
 
+1. As shown by our explanatory data analysis, sex was a major predictor in whether or not someone was alcoholic. Especially for males, the odds of being a alcoholic increases.
+
+2. Interestingly, the father's job also tended to have a greater impact on increasing the odds of being alcoholic, barring Teaching. For fathers who were teachers, odds of becoming alcoholic decreased, while for mothers, increased. Teachers were the only level of Mother's job that was assosciated with an increase of being alcoholic.
 
 ---
 
@@ -318,205 +345,8 @@ Some of the limitations within in our data analysis and results:
 4. The data set was also independently sourced from https://www.kaggle.com/uciml/student-alcohol-consumption/discussion/206577, and relied on self-reporting alcohol consumption factors.
 
 ---
-
-*********** END OF FORMATTING BELOW HERE IS PREVIOUS TRAINNING WITH LINEAR MODEL AND XARGAIN STYLE *********** 
-
-```{r test_train_data}
-student_por2 <- student_por %>%
-  select(school,
-        age,
-        failures,
-        freetime,
-        sex,
-        Fjob,
-        Mjob,
-        reason,
-        studytime,
-        famsup,
-        goout,
-        health,
-        absences,
-        Talc
-        )
-
-set.seed(1234)
-student_por_pred_split <- initial_split(student_por2)
-
-student_por_pred_train <- training(student_por_pred_split)
-student_por_pred_test <- testing(student_por_pred_split)
-
-student_por_pred_rec <- recipe(Talc ~ ., data = student_por_pred_train) %>%
-  step_zv(all_predictors())
-
-student_por_model <- linear_reg() %>%
-  set_engine("lm")
-
-student_por_pred_workflow <- workflow() %>% add_model(student_por_model) %>% 
-  add_recipe(student_por_pred_rec)
-
-student_por_pred_fit <- student_por_pred_workflow %>% 
-  fit(data = student_por_pred_train)
-student_por_pred_fit
-
-summary(student_por_pred_fit$fit)
-
-student_por_train_pred <- predict(student_por_pred_fit, student_por_pred_train) %>%
-  bind_cols(student_por_pred_train %>% select(Talc))
-
-student_por_train_pred
-
-ggplot(data = student_por_train_pred, aes(x=Talc, y=.pred)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
-  labs(
-    x = "Actual",
-    y = "Predicted"
-  ) +
-  geom_smooth()
-
-
-```
-
----
-
 class: inverse, middle, center
 
-# Using xaringan
+# Thank You! Questions?
 
----
 
-# xaringan
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
-
-.pull-left[
-or text in two columns $^*$
-]
-.pull-right[
-- like
-- this
-]
-
-.footnote[
-[*] And add footnotes
-]
-
----
-
-# Code
-
-```{r boring-regression}
-# a boring regression
-model <- lm(dist ~ speed, data = cars)
-tidy(model)
-glance(model)
-```
-
----
-
-# Plots
-
-```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present 
-# in my slides. But I need the resulting data frame for a plot I want to present.
-iris_modified <- iris %>%
-  mutate(Species = fct_other(Species, keep = "setosa"))
-```
-
-```{r plot-iris, echo = FALSE}
-# Code hidden with echo = FALSE
-# Uses modified iris dataset from previous chunk
-# Play around with height and width until you're happy with the look
-ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
-  geom_point() + 
-  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
-```
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
-# see how I changed out.width and fig.width from defaults
-# to make the figure bigger
-ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
-  geom_boxplot() +
-  theme_minimal()
-```
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-```{r iris-table, echo = FALSE}
-kable(head(iris), format = "html")
-```
-
----
-
-# Images
-
-```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
-```
-
-Or you can also include a full page image. See next slide.
-
----
-
-background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
-
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# Feeling adventurous?
-
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
-
-- You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
-
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
-
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.

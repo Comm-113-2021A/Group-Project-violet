@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Factors of Alcoholism</title>
+    <title>Factors of Alcoholism In Teens</title>
     <meta charset="utf-8" />
     <meta name="author" content="Team Violet" />
-    <meta name="date" content="2021-04-28" />
+    <meta name="date" content="2021-04-29" />
     <script src="libs/header-attrs-2.7/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -12,10 +12,9 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Factors of Alcoholism
-## in teens
+# Factors of Alcoholism In Teens
 ### Team Violet
-### 2021-04-28
+### 2021-04-29
 
 ---
 
@@ -31,9 +30,10 @@ class: center, middle, inverse, title-slide
 
 class: left, middle
 
-## A statement of the overall goal / research question
+## Overall Goal and Basic Research Question
 
 The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcoholism.
+
 ---
 
 # Alcoholism in Students
@@ -48,7 +48,7 @@ The goal of our research will be to identify the academic and social factors tha
 ## 2 1             75
 ```
 
-Roughly 11.56% of students have a total alcohol consumption higher than 3 (out of a max of 5).
+Roughly 11.56% of students have a total alcohol consumption higher than or equal to 3 (out of a max of 5).
 ---
 
 #Sex
@@ -89,11 +89,12 @@ We first attempted to create a linear regression model to predict total alcohol 
 
 The following equation was established from our initial model: 
 
-`$$\hat{Total Alcohol Level} = 0.07(MS School) +0.06(Age)+0.03(failures)-0.02(Free time)+0.54(Male)+$$`
+`$$\hat{Total Alcohol Level} = 0.07(MS School) +0.06(Age)+0.03(Failures)-0.02(Free time)+0.54(Male)+$$`
 `$$0.17(FatherJobHealth)+0.11(FatherJobOther)+0.30(FatherJobService)-0.05(FatherJobTeacher)-$$`
 `$$0.24(MotherJobHealth)-0.09(MotherJobOther)-0.04(MotherJobService)+0.05(MotherJobTeacher)+$$`
 `$$0.12(ReasonHome)+0.29(ReasonOther)+0.005(ReasonReputation)-0.081(StudyTime)+$$`
-`$$0.03(FamilySupportYes)+0.23(GoingOut)+0.04(Health)+0.03(Absences)$$`
+`$$0.03(FamilySupportYes)+0.23(GoingOut)+0.04(Health)+0.03(Absences)-0.49$$`
+This model indicates that holding all other variables constant, a change in one of them would be a change in predicted Total Alcohol level by the related coefficient. The intercept would not be interpretable in this context.
 
 .pull-left[
 
@@ -101,7 +102,7 @@ The following equation was established from our initial model:
 
 ---
 
-# Residual Plot
+# Residual Plot One
 
 .pull-left[
 The residual plot shows obvious problems, as there are distinct negatively sloped lines in the plot.
@@ -119,7 +120,7 @@ This may mean that the prediction confidence may be too low, and a artificially 
 
 
 .pull-left[
-A residual plot of the logistic model with all variables as predictors shows the same trends as the previous one.
+A residual plot of the logistic model with all variables as predictors shows the same trends as the previous one. This further supports the fact that a linear model would be inapporpiate in this setting.
 ]
 
 .pull-right[
@@ -130,60 +131,38 @@ A residual plot of the logistic model with all variables as predictors shows the
 
 class: inverse, middle, center
 
-# Attempt Two
+# Attempt: Logistic Models
 
 ---
 
 # Logistic Model
 
 A linear model does not work, so we moved to a logistic model to predict alcoholism in students. 
-A student is an Alcoholic if they have a total alcohol consumption greater than three. 
+A student is an Alcoholic if they have a total alcohol consumption greater than or equal to three.
+
+From the regression, the following model was generated:
+
+`$$\hat{log(alcoholism)} = 0.39(MSSchool)+0.24(Age)+0.25(Faillures)-0.03(Freetime)+1.49(Male)+$$`
+`$$0.72(FatherJobHealth)+0.31(FatherJobOther)+0.91(FatherJobService)-0.45(FatherJobTeacher)-$$`
+`$$0.83(MotherJobHealth)-0.10(MotherJobOther)-0.33(MotherJobService)+0.41(MotherJobTeacher)+$$`
+`$$0.51(ReasonHome)+0.93(ReasonOther)+0.21(ReasonReputation)-0.21(StudyTime)-$$`
+`$$0.06(FamilySupportYes)+0.54(GoingOut)+0.10(Health)+0.07(Absences)-9.8$$`
+This model indicates that holding all other factors constant, an increase in one of the variables would result in the log of the odds of being alcoholic by a factor of the related coefficient.
 
 .pull-left[
 
-```r
-alcoholism_fit &lt;- logistic_reg() %&gt;%
-  set_engine("glm") %&gt;%
-  fit(Alcoholism ~ school +
-        age + 
-        failures + 
-        freetime + 
-        sex +
-        Fjob + 
-        Mjob +
-        reason + 
-        studytime +
-        famsup +
-        goout +
-        health +
-        absences, data = student_por)
-```
 ]
 
-.pull-right[
-
-```r
-tidy(alcoholism_fit)
-```
-
-```
-## # A tibble: 22 x 5
-##    term         estimate std.error statistic    p.value
-##    &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
-##  1 (Intercept)   -9.81       2.35     -4.17  0.0000308 
-##  2 schoolMS       0.387      0.319     1.21  0.225     
-##  3 age            0.238      0.123     1.94  0.0528    
-##  4 failures       0.246      0.210     1.17  0.242     
-##  5 freetime      -0.0323     0.140    -0.231 0.817     
-##  6 sexM           1.49       0.311     4.80  0.00000161
-##  7 Fjobhealth     0.716      1.02      0.702 0.483     
-##  8 Fjobother      0.309      0.688     0.450 0.653     
-##  9 Fjobservices   0.912      0.700     1.30  0.193     
-## 10 Fjobteacher   -0.452      1.05     -0.431 0.666     
-## # … with 12 more rows
-```
-]
 ---
+
+# Assessing Logistic Model #1
+
+
+
+
+
+
+
 ---
 
 class: inverse, middle, center
@@ -194,7 +173,11 @@ class: inverse, middle, center
 
 # Implications
 
+The logistic modeling indicated:
 
+1. As shown by our explanatory data analysis, sex was a major predictor in whether or not someone was alcoholic. Especially for males, the odds of being a alcoholic increases.
+
+2. Interestingly, the father's job also tended to have a greater impact on increasing the odds of being alcoholic, barring Teaching. For fathers who were teachers, odds of becoming alcoholic decreased, while for mothers, increased. Teachers were the only level of Mother's job that was assosciated with an increase of being alcoholic.
 
 ---
 
@@ -211,327 +194,11 @@ Some of the limitations within in our data analysis and results:
 4. The data set was also independently sourced from https://www.kaggle.com/uciml/student-alcohol-consumption/discussion/206577, and relied on self-reporting alcohol consumption factors.
 
 ---
-
-*********** END OF FORMATTING BELOW HERE IS PREVIOUS TRAINNING WITH LINEAR MODEL AND XARGAIN STYLE *********** 
-
-
-```r
-student_por2 &lt;- student_por %&gt;%
-  select(school,
-        age,
-        failures,
-        freetime,
-        sex,
-        Fjob,
-        Mjob,
-        reason,
-        studytime,
-        famsup,
-        goout,
-        health,
-        absences,
-        Talc
-        )
-
-set.seed(1234)
-student_por_pred_split &lt;- initial_split(student_por2)
-
-student_por_pred_train &lt;- training(student_por_pred_split)
-student_por_pred_test &lt;- testing(student_por_pred_split)
-
-student_por_pred_rec &lt;- recipe(Talc ~ ., data = student_por_pred_train) %&gt;%
-  step_zv(all_predictors())
-
-student_por_model &lt;- linear_reg() %&gt;%
-  set_engine("lm")
-
-student_por_pred_workflow &lt;- workflow() %&gt;% add_model(student_por_model) %&gt;% 
-  add_recipe(student_por_pred_rec)
-
-student_por_pred_fit &lt;- student_por_pred_workflow %&gt;% 
-  fit(data = student_por_pred_train)
-student_por_pred_fit
-```
-
-```
-## ══ Workflow [trained] ══════════════════════════════════════════════════════════
-## Preprocessor: Recipe
-## Model: linear_reg()
-## 
-## ── Preprocessor ────────────────────────────────────────────────────────────────
-## 1 Recipe Step
-## 
-## ● step_zv()
-## 
-## ── Model ───────────────────────────────────────────────────────────────────────
-## 
-## Call:
-## stats::lm(formula = ..y ~ ., data = data)
-## 
-## Coefficients:
-##      (Intercept)          schoolMS               age          failures  
-##         -0.41952           0.03310           0.06428           0.06713  
-##         freetime              sexM        Fjobhealth         Fjobother  
-##         -0.05613           0.59718           0.14424           0.02520  
-##     Fjobservices       Fjobteacher        Mjobhealth         Mjobother  
-##          0.26241          -0.19095          -0.36071          -0.08902  
-##     Mjobservices       Mjobteacher        reasonhome       reasonother  
-##         -0.08813          -0.09590           0.06610           0.33046  
-## reasonreputation         studytime         famsupyes             goout  
-##         -0.02317          -0.06362           0.02490           0.24807  
-##           health          absences  
-##          0.04459           0.02900
-```
-
-```r
-summary(student_por_pred_fit$fit)
-```
-
-```
-##         Length Class  Mode
-## actions 1      -none- list
-## fit     5      _lm    list
-```
-
-```r
-student_por_train_pred &lt;- predict(student_por_pred_fit, student_por_pred_train) %&gt;%
-  bind_cols(student_por_pred_train %&gt;% select(Talc))
-
-student_por_train_pred
-```
-
-```
-## # A tibble: 487 x 2
-##    .pred  Talc
-##    &lt;dbl&gt; &lt;dbl&gt;
-##  1  1.49  1   
-##  2  1.36  1   
-##  3  1.41  2.29
-##  4  1.06  1.29
-##  5  1.69  1.29
-##  6  1.98  1   
-##  7  1.40  1   
-##  8  1.47  1   
-##  9  1.19  1.29
-## 10  1.80  1.57
-## # … with 477 more rows
-```
-
-```r
-ggplot(data = student_por_train_pred, aes(x=Talc, y=.pred)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
-  labs(
-    x = "Actual",
-    y = "Predicted"
-  ) +
-  geom_smooth()
-```
-
-```
-## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-```
-
-&lt;img src="presentation_files/figure-html/test_train_data-1.png" width="80%" /&gt;
-
----
-
 class: inverse, middle, center
 
-# Using xaringan
-
----
-
-# xaringan
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
-
-.pull-left[
-or text in two columns `\(^*\)`
-]
-.pull-right[
-- like
-- this
-]
-
-.footnote[
-[*] And add footnotes
-]
-
----
-
-# Code
+# Thank You! Questions?
 
 
-```r
-# a boring regression
-model &lt;- lm(dist ~ speed, data = cars)
-tidy(model)
-```
-
-```
-## # A tibble: 2 x 5
-##   term        estimate std.error statistic  p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)   -17.6      6.76      -2.60 1.23e- 2
-## 2 speed           3.93     0.416      9.46 1.49e-12
-```
-
-```r
-glance(model)
-```
-
-```
-## # A tibble: 1 x 12
-##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     0.651         0.644  15.4      89.6 1.49e-12     1  -207.  419.  425.
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;
-```
-
----
-
-# Plots
-
-
-
-&lt;img src="presentation_files/figure-html/plot-iris-1.png" width="80%" /&gt;
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-&lt;img src="presentation_files/figure-html/unnamed-chunk-3-1.png" width="100%" /&gt;
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Width &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Petal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Petal.Width &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Species &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
----
-
-# Images
-
-&lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1650&amp;q=80" alt="Image credit: Photo by Jörg Angeli on Unsplash." width="60%" /&gt;
-&lt;p class="caption"&gt;Image credit: Photo by Jörg Angeli on Unsplash.&lt;/p&gt;
-&lt;/div&gt;
-
-Or you can also include a full page image. See next slide.
-
----
-
-background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1650&amp;q=80)
-
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &amp;#36;\alpha+\beta$ renders `\(\alpha+\beta\)`. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-`$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$`
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# Feeling adventurous?
-
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
-
-- You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
-
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
-
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
