@@ -56,6 +56,10 @@ class: left, middle
 The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcoholism.
 
 ---
+class: inverse, middle, center
+
+# Notatable Visualizations
+---
 
 # Alcoholism in Students
 
@@ -71,10 +75,22 @@ count
 #   count()
 ```
 
-Roughly `r round(count[2, 2] / (count[1, 2] + count[2, 2]) * 100, 2)`% of students have a total alcohol consumption higher than or equal to 3 (out of a max of 5).
+Roughly `r round(count[2, 2] / (count[1, 2] + count[2, 2]) * 100, 2)`% of students have a total alcohol consumption higher than 3 (out of a max of 5).
 ---
+```{r total-dalc-walc-alcoholism, echo = FALSE} 
+student_por %>% 
+  ggplot() +
+  geom_jitter(mapping = aes(x = Alcoholism, y = Walc), color = "blue") +
+  geom_jitter(mapping = aes(x = Alcoholism, y = Dalc), color = "green") + 
+  labs(y = "Scale", 
+       x = "Alcoholism", 
+       title = "Alcoholism by consumption", 
+       subtitle = "Blue - weekday consumption, Green - weekend consumption")
+```
 
-#Sex
+Those who have high weekend alcohol consumption (greater than 3), tend to be alcoholics. Alcoholism seems to depend more on weeked alcohol consumption than daily alcohol consumption.
+
+---
 
 ```{r sex, echo= FALSE}
 student_por_sex <- student_por %>% 
@@ -91,26 +107,28 @@ student_por_sex %>%
     x = "Sex", 
     y = "Average Total Alcohol Consumption"
   )
-
-
 ```
 
----
+Men have a higher average total alcohol consumption. 
 
-# Age
-```{r age, echo=FALSE, warning=FALSE}
+---
+```{r age, out.width="70%", fig.width=4, echo=FALSE, warning=FALSE}
 
 student_por %>%
   ggplot(aes(x=age, y=Talc)) +
   geom_jitter() +
-  geom_smooth()
+  geom_smooth() +
+  labs(
+    title = "Total Alcohol Consumption By Age", 
+    x = "Age", 
+    y = "Total Alcohol Consumption"
+  )
 
 ```
 
+As age increases, total alcohol consumption seems to increase. However, this is likely due to a few outlying points with high age and high total alcohol consumption. 
+
 ---
-
-
-#Reason
 ```{r reason, echo=FALSE}
 student_por_reason <- student_por %>% 
   select(reason, Talc) %>% 
@@ -127,10 +145,9 @@ student_por_reason %>%
   )
 
 ```
+
+High schoolers who choose their school based on reputation have the lowest total alohol consumption while those who choose for reasons besides courses, closeness to home, and reputation, have the highest.
 ---
-
-# Parent Cohabitation
-
 ```{r Pstatus, echo=FALSE, warning=FALSE}
 student_por_Pstatus <- student_por %>% 
   select(Pstatus, Talc) %>% 
@@ -147,6 +164,8 @@ student_por_Pstatus %>%
     y = "Average Total Alcohol Consumption"
   )
 ```
+
+Highschoolers with parents who live together have a higher average total alcohol consumption value, than those whose parents live apart. 
 
 ---
 class: inverse, middle, center
@@ -192,13 +211,10 @@ lin_model <- linear_reg() %>%
 
 # Residual Plot One
 
-.pull-left[
 The residual plot shows obvious problems, as there are distinct negatively sloped lines in the plot.
 This may mean that the prediction confidence may be too low, and a artificially low standard error.
-]
 
-.pull-right[
-```{r resid, out.width="100%", fig.width=5, echo = FALSE}
+```{r resid, out.width="70%", fig.width=4, echo = FALSE}
 aug <- augment(lin_model$fit)
 
 aug %>%
@@ -206,7 +222,6 @@ aug %>%
   geom_jitter() + 
   geom_hline(yintercept = 0)
 ```
-]
 
 ---
 
@@ -245,12 +260,9 @@ lin_model_all <- linear_reg() %>%
         absences, data = student_por)
 ```
 
-.pull-left[
 A residual plot of the logistic model with all variables as predictors shows the same trends as the previous one. This further supports the fact that a linear model would be inapporpiate in this setting.
-]
 
-.pull-right[
-```{r resid-all, out.width="100%", fig.width=5, echo = FALSE}
+```{r resid-all, out.width="70%", fig.width=4, echo = FALSE}
 aug2 <- augment(lin_model_all$fit)
 
 aug2 %>%
@@ -258,7 +270,6 @@ aug2 %>%
   geom_jitter() + 
   geom_hline(yintercept = 0)
 ```
-]
 
 ---
 
@@ -272,6 +283,23 @@ class: inverse, middle, center
 
 A linear model does not work, so we moved to a logistic model to predict alcoholism in students. 
 A student is an Alcoholic if they have a total alcohol consumption greater than or equal to three.
+
+For the first model, we choose predictors that we thought heavily influenced student alcohol consumption. These predictors are:
+- The students school
+- Age
+- Sex
+- The number of past failures 
+- Freetime after school
+- Father's job
+- Mother's job
+- The reason to choose this school
+- Weekly study time
+- Family educational support
+- Time spent going out with friends
+- Current health status
+- Number of school absences
+
+---
 
 From the regression, the following model was generated:
 
@@ -312,7 +340,209 @@ alcoholism_fit <- logistic_reg() %>%
 ```{r}
 ```
 
+---
+# Logistic Model 2
 
+We created another comparison logistic model with all the variables not previously used, the variables we suspected had little to no effect on an individual's alcohol consumption.
+
+Predictors:
+- Student's home address (urban or rural)
+- Family Size
+- Mother's education
+- Father's education
+- Student's guardian
+- Home to school travel time
+- Extra educational support
+- Extra paid classes
+- Extra-curricular activities (yes or no)
+- Attended nursery school
+- Want to pursue higher education
+- Home internet access
+- In a romantic relationship
+- Quality of family relationships
+---
+
+```{r log-model-2, echo = FALSE, message=FALSE}
+alcoholism_fit_two <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(Alcoholism ~  
+        address + 
+        famsize + 
+        Pstatus + 
+        Medu +
+        Fedu +
+        guardian +
+        traveltime +
+        schoolsup +
+        paid +
+        activities +
+        nursery +
+        higher +
+        internet +
+        romantic +
+        famrel, data = student_por)
+```
+
+From the regression, the following model was generated:
+
+$$\hat{log(alcoholism)} = -.24(addressU)+.51(famssizeLE3)+.24(PstatusT)-.01(Medu)+.14(Fedu)-.09(guardianmother)+.63(guardianother)+.36(traveltime)-.36(schoolsupyes)+.37(paidyes)+.18(activitiesyes)-.39(nurseryyes)-.65(higheryes)+.26(internetyes)+.01(romanticyes)-.13(famrel)$$
+$$0.72(FatherJobHealth)+0.31(FatherJobOther)+0.91(FatherJobService)-0.45(FatherJobTeacher)-$$
+$$0.83(MotherJobHealth)-0.10(MotherJobOther)-0.33(MotherJobService)+0.41(MotherJobTeacher)+$$
+$$0.51(ReasonHome)+0.93(ReasonOther)+0.21(ReasonReputation)-0.21(StudyTime)-$$
+$$0.06(FamilySupportYes)+0.54(GoingOut)+0.10(Health)+0.07(Absences)-9.8$$
+This model indicates that holding all other factors constant, an increase in one of the variables would result in the log of the odds of being alcoholic by a factor of the related coefficient.
+
+---
+
+# Assessing Logistic Model #2
+
+
+```{r split-train, echo = FALSE}
+student_por_log_two <- student_por %>% 
+  select(Alcoholism,
+         address,
+         famsize, 
+         Pstatus,
+         Medu,
+         Fedu,
+         guardian,
+         traveltime,
+         schoolsup,
+         paid,
+         activities,
+         nursery,
+         higher,
+         internet,
+         romantic,
+         famrel)
+
+set.seed(2542)
+
+split_data_two <- initial_split(student_por_log_two, strata = Alcoholism)
+
+training_data_two <- training(split_data_two)
+
+testing_data_two <- testing(split_data_two)
+```
+
+```{r recipe, echo = FALSE}
+recipe_two <-
+  recipe(Alcoholism ~ address + 
+        famsize + 
+        Pstatus + 
+        Medu +
+        Fedu +
+        guardian +
+        traveltime +
+        schoolsup +
+        paid +
+        activities +
+        nursery +
+        higher +
+        internet +
+        romantic +
+        famrel, data = training_data_two) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%
+  step_corr(all_predictors(), threshold = 0.8) %>%
+  step_center(all_predictors()) %>%
+  step_scale(all_predictors()) %>%
+  prep()
+
+training_baked_two <- juice(recipe_two)
+
+testing_baked_two <- recipe_two %>%
+  bake(new_data = testing_data_two)
+
+logistic_glm_two <- 
+  logistic_reg(mode = "classification") %>%
+  set_engine("glm") %>%
+  fit(Alcoholism ~ ., data = training_baked_two)
+```
+
+```{r predictions, echo = FALSE}
+predictions_class_two <- logistic_glm_two %>%
+  predict(new_data = testing_baked_two) %>%
+  bind_cols(testing_baked_two %>% select(Alcoholism))
+
+predictions_two <- logistic_glm_two %>%
+  predict(testing_baked_two, type = "prob") %>%
+  bind_cols(predictions_class_two)
+```
+
+```{r evaluating_model, out.width="60%", fig.width=4, echo = FALSE}
+predictions_two %>%
+  conf_mat(Alcoholism, .pred_class) %>%
+  pluck(1) %>%
+  as_tibble() %>%
+  ggplot(aes(Prediction, Truth, alpha = n)) +
+  geom_tile(show.legend = FALSE) +
+  geom_text(aes(label = n), colour = "white", alpha = 1, size = 8) +
+  theme(panel.grid.major = element_blank()) +
+  labs(
+    y = "Actual Value",
+    x = "Predicted Valu",
+    fill = NULL,
+    title = "Confusion Matrix", 
+    subtitle = "Model 2"
+  )
+
+```
+
+From the matrix it is clear that this model is flawed. While it correctly predicts the majority of cases, it will never predict that someone has a total alcohol consumption over 3.
+---
+
+High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, but horrible AUC and log_loss values. (Log_loss quantifies how correct the predictions are, it takes how far off the model is into account, so a high value means that when the model is wrong it is very wrong). The ROC curve is also horrible, a good model goes high up into the top left corner to maximize the area underneath it.
+
+.pull-left[
+```{r accuracy_and_graph, echo = FALSE}
+predictions_two %>%
+  accuracy(Alcoholism, .pred_class) 
+
+# Find the logloss
+
+predictions_two %>%
+  mn_log_loss(Alcoholism, .pred_1)
+
+# Find the area under the ROC curve (AUC)
+
+predictions_two %>%
+  roc_auc(Alcoholism, .pred_1)
+
+# Create a tibble that holds all the evaluation metrics
+
+Model2_metrics <- tibble(
+  "log_loss" = 
+    mn_log_loss(predictions_two, Alcoholism, .pred_1) %>%
+    select(.estimate),
+  "accuracy" = 
+    accuracy(predictions_two, Alcoholism, .pred_class) %>%
+    select(.estimate),
+  "auc" = 
+    roc_auc(predictions_two, Alcoholism, .pred_1) %>%
+    select(.estimate)
+) %>%
+  unnest(everything()) %>%
+  pivot_longer(everything(), names_to = "metric", values_to = "value") %>%
+  mutate(model = "Model 2")
+```
+]
+.pull-right[
+```{r graph, out.width="200%", fig.width=5, echo = FALSE}
+predictions_two %>%
+  roc_curve(Alcoholism, .pred_1) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path() +
+  geom_abline(lty = 3) +
+  coord_equal() +
+  labs(
+    y = "True Positive Rate (Sensitivity)",
+    x = "False Positive Rate",
+    fill = NULL,
+    title = "ROC Curve",
+    subtitle = "Model 2"
+  )
+```
+]
 
 ---
 

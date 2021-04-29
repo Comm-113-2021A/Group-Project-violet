@@ -35,6 +35,10 @@ class: left, middle
 The goal of our research will be to identify the academic and social factors that lead to alcoholism in teenagers. We will then construct a model to identify the likelihood of teenagers to suffer from alcoholism.
 
 ---
+class: inverse, middle, center
+
+# Notatable Visualizations
+---
 
 # Alcoholism in Students
 
@@ -48,33 +52,36 @@ The goal of our research will be to identify the academic and social factors tha
 ## 2 1             75
 ```
 
-Roughly 11.56% of students have a total alcohol consumption higher than or equal to 3 (out of a max of 5).
+Roughly 11.56% of students have a total alcohol consumption higher than 3 (out of a max of 5).
 ---
+&lt;img src="presentation_files/figure-html/total-dalc-walc-alcoholism-1.png" width="80%" /&gt;
 
-#Sex
+Those who have high weekend alcohol consumption (greater than 3), tend to be alcoholics. Alcoholism seems to depend more on weeked alcohol consumption than daily alcohol consumption.
+
+---
 
 &lt;img src="presentation_files/figure-html/sex-1.png" width="80%" /&gt;
 
----
+Men have a higher average total alcohol consumption. 
 
-# Age
+---
 
 ```
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-&lt;img src="presentation_files/figure-html/age-1.png" width="80%" /&gt;
+&lt;img src="presentation_files/figure-html/age-1.png" width="70%" /&gt;
+
+As age increases, total alcohol consumption seems to increase. However, this is likely due to a few outlying points with high age and high total alcohol consumption. 
 
 ---
-
-
-#Reason
 &lt;img src="presentation_files/figure-html/reason-1.png" width="80%" /&gt;
+
+High schoolers who choose their school based on reputation have the lowest total alohol consumption while those who choose for reasons besides courses, closeness to home, and reputation, have the highest.
 ---
-
-# Parent Cohabitation
-
 &lt;img src="presentation_files/figure-html/Pstatus-1.png" width="80%" /&gt;
+
+Highschoolers with parents who live together have a higher average total alcohol consumption value, than those whose parents live apart. 
 
 ---
 class: inverse, middle, center
@@ -104,14 +111,10 @@ This model indicates that holding all other variables constant, a change in one 
 
 # Residual Plot One
 
-.pull-left[
 The residual plot shows obvious problems, as there are distinct negatively sloped lines in the plot.
 This may mean that the prediction confidence may be too low, and a artificially low standard error.
-]
 
-.pull-right[
-&lt;img src="presentation_files/figure-html/resid-1.png" width="100%" /&gt;
-]
+&lt;img src="presentation_files/figure-html/resid-1.png" width="70%" /&gt;
 
 ---
 
@@ -119,13 +122,9 @@ This may mean that the prediction confidence may be too low, and a artificially 
 
 
 
-.pull-left[
 A residual plot of the logistic model with all variables as predictors shows the same trends as the previous one. This further supports the fact that a linear model would be inapporpiate in this setting.
-]
 
-.pull-right[
-&lt;img src="presentation_files/figure-html/resid-all-1.png" width="100%" /&gt;
-]
+&lt;img src="presentation_files/figure-html/resid-all-1.png" width="70%" /&gt;
 
 ---
 
@@ -139,6 +138,23 @@ class: inverse, middle, center
 
 A linear model does not work, so we moved to a logistic model to predict alcoholism in students. 
 A student is an Alcoholic if they have a total alcohol consumption greater than or equal to three.
+
+For the first model, we choose predictors that we thought heavily influenced student alcohol consumption. These predictors are:
+- The students school
+- Age
+- Sex
+- The number of past failures 
+- Freetime after school
+- Father's job
+- Mother's job
+- The reason to choose this school
+- Weekly study time
+- Family educational support
+- Time spent going out with friends
+- Current health status
+- Number of school absences
+
+---
 
 From the regression, the following model was generated:
 
@@ -161,7 +177,83 @@ This model indicates that holding all other factors constant, an increase in one
 
 
 
+---
+# Logistic Model 2
 
+We created another comparison logistic model with all the variables not previously used, the variables we suspected had little to no effect on an individual's alcohol consumption.
+
+Predictors:
+- Student's home address (urban or rural)
+- Family Size
+- Mother's education
+- Father's education
+- Student's guardian
+- Home to school travel time
+- Extra educational support
+- Extra paid classes
+- Extra-curricular activities (yes or no)
+- Attended nursery school
+- Want to pursue higher education
+- Home internet access
+- In a romantic relationship
+- Quality of family relationships
+---
+
+
+
+From the regression, the following model was generated:
+
+`$$\hat{log(alcoholism)} = -.24(addressU)+.51(famssizeLE3)+.24(PstatusT)-.01(Medu)+.14(Fedu)-.09(guardianmother)+.63(guardianother)+.36(traveltime)-.36(schoolsupyes)+.37(paidyes)+.18(activitiesyes)-.39(nurseryyes)-.65(higheryes)+.26(internetyes)+.01(romanticyes)-.13(famrel)$$`
+`$$0.72(FatherJobHealth)+0.31(FatherJobOther)+0.91(FatherJobService)-0.45(FatherJobTeacher)-$$`
+`$$0.83(MotherJobHealth)-0.10(MotherJobOther)-0.33(MotherJobService)+0.41(MotherJobTeacher)+$$`
+`$$0.51(ReasonHome)+0.93(ReasonOther)+0.21(ReasonReputation)-0.21(StudyTime)-$$`
+`$$0.06(FamilySupportYes)+0.54(GoingOut)+0.10(Health)+0.07(Absences)-9.8$$`
+This model indicates that holding all other factors constant, an increase in one of the variables would result in the log of the odds of being alcoholic by a factor of the related coefficient.
+
+---
+
+# Assessing Logistic Model #2
+
+
+
+
+
+
+
+
+&lt;img src="presentation_files/figure-html/evaluating_model-1.png" width="60%" /&gt;
+
+From the matrix it is clear that this model is flawed. While it correctly predicts the majority of cases, it will never predict that someone has a total alcohol consumption over 3.
+---
+
+High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, but horrible AUC and log_loss values. (Log_loss quantifies how correct the predictions are, it takes how far off the model is into account, so a high value means that when the model is wrong it is very wrong). The ROC curve is also horrible, a good model goes high up into the top left corner to maximize the area underneath it.
+
+.pull-left[
+
+```
+## # A tibble: 1 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy binary         0.888
+```
+
+```
+## # A tibble: 1 x 3
+##   .metric     .estimator .estimate
+##   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+## 1 mn_log_loss binary          2.09
+```
+
+```
+## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.491
+```
+]
+.pull-right[
+&lt;img src="presentation_files/figure-html/graph-1.png" width="200%" /&gt;
+]
 
 ---
 
