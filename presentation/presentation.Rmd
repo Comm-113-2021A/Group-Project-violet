@@ -88,7 +88,7 @@ student_por %>%
        subtitle = "Blue - weekday consumption, Green - weekend consumption")
 ```
 
-Those who have high weekend alcohol consumption (greater than 3), tend to be alcoholics. Alcoholism seems to depend more on weeked alcohol consumption than daily alcohol consumption.
+Those who have high weekend alcohol consumption (greater than 3), tend to be alcoholics. Alcoholism seems to depend more on weekend alcohol consumption than daily alcohol consumption.
 
 ---
 
@@ -165,7 +165,7 @@ student_por_Pstatus %>%
   )
 ```
 
-Highschoolers with parents who live together have a higher average total alcohol consumption value, than those whose parents live apart. 
+High schoolers with parents who live together have a higher average total alcohol consumption value than those whose parents live apart. 
 
 ---
 class: inverse, middle, center
@@ -334,11 +334,148 @@ alcoholism_fit <- logistic_reg() %>%
 
 # Assessing Logistic Model #1
 
-```{r}
+```{r split-train_one, echo = FALSE}
+student_por_log <- student_por %>% 
+  select(Alcoholism, 
+         school,
+         age,
+         failures,
+         freetime, 
+         sex,
+         Fjob, 
+         Mjob,
+         reason, 
+         studytime,
+         famsup,
+         goout,
+         health,
+         absences)
+
+set.seed(2542)
+
+split_data <- initial_split(student_por_log, strata = Alcoholism)
+
+training_data <- training(split_data)
+
+testing_data <- testing(split_data)
 ```
 
-```{r}
+```{r recipe_one, echo = FALSE}
+recipe <-
+  recipe(Alcoholism ~ school +
+        age + 
+        failures + 
+        freetime + 
+        sex +
+        Fjob + 
+        Mjob +
+        reason + 
+        studytime +
+        famsup +
+        goout +
+        health +
+        absences, data = training_data) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%
+  step_corr(all_predictors(), threshold = 0.8) %>%
+  step_center(all_predictors()) %>%
+  step_scale(all_predictors()) %>%
+  prep()
+
+training_baked <- juice(recipe)
+
+testing_baked <- recipe %>%
+  bake(new_data = testing_data)
+
+logistic_glm <- 
+  logistic_reg(mode = "classification") %>%
+  set_engine("glm") %>%
+  fit(Alcoholism ~ ., data = training_baked)
 ```
+
+```{r predictions_one, echo = FALSE}
+predictions_class <- logistic_glm %>%
+  predict(new_data = testing_baked) %>%
+  bind_cols(testing_baked %>% select(Alcoholism))
+
+predictions <- logistic_glm %>%
+  predict(testing_baked, type = "prob") %>%
+  bind_cols(predictions_class)
+```
+
+```{r evaluating_model_one, out.width="60%", fig.width=4, echo = FALSE}
+predictions %>%
+  conf_mat(Alcoholism, .pred_class) %>%
+  pluck(1) %>%
+  as_tibble() %>%
+  ggplot(aes(Prediction, Truth, alpha = n)) +
+  geom_tile(show.legend = FALSE) +
+  geom_text(aes(label = n), colour = "white", alpha = 1, size = 8) +
+  theme(panel.grid.major = element_blank()) +
+  labs(
+    y = "Actual Value",
+    x = "Predicted Valu",
+    fill = NULL,
+    title = "Confusion Matrix", 
+    subtitle = "Model 2"
+  )
+
+```
+
+From the matrix it seems that out model does decently well. The predicted and actual values to not match up 28 times, but the accuracy seems to be pretty high. 
+---
+
+High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, low AUC and high log_loss values. (Log_loss quantifies how correct the predictions are, it takes how far off the model is into account, so a high value means that when the model is wrong it is very wrong). The ROC curve is also horrible, a good model goes high up into the top left corner to maximize the area underneath it.
+
+.pull-left[
+```{r accuracy_and_graph, echo = FALSE}
+predictions %>%
+  accuracy(Alcoholism, .pred_class) 
+
+# Find the logloss
+
+predictions %>%
+  mn_log_loss(Alcoholism, .pred_1)
+
+# Find the area under the ROC curve (AUC)
+
+predictions %>%
+  roc_auc(Alcoholism, .pred_1)
+
+# Create a tibble that holds all the evaluation metrics
+
+Model2_metrics <- tibble(
+  "log_loss" = 
+    mn_log_loss(predictions, Alcoholism, .pred_1) %>%
+    select(.estimate),
+  "accuracy" = 
+    accuracy(predictions, Alcoholism, .pred_class) %>%
+    select(.estimate),
+  "auc" = 
+    roc_auc(predictions, Alcoholism, .pred_1) %>%
+    select(.estimate)
+) %>%
+  unnest(everything()) %>%
+  pivot_longer(everything(), names_to = "metric", values_to = "value") %>%
+  mutate(model = "Model 2")
+```
+]
+.pull-right[
+```{r graph, out.width="200%", fig.width=5, echo = FALSE}
+predictions %>%
+  roc_curve(Alcoholism, .pred_1) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path() +
+  geom_abline(lty = 3) +
+  coord_equal() +
+  labs(
+    y = "True Positive Rate (Sensitivity)",
+    x = "False Positive Rate",
+    fill = NULL,
+    title = "ROC Curve",
+    subtitle = "Model 2"
+  )
+```
+]
 
 ---
 # Logistic Model 2
@@ -491,7 +628,7 @@ predictions_two %>%
 From the matrix it is clear that this model is flawed. While it correctly predicts the majority of cases, it will never predict that someone has a total alcohol consumption over 3.
 ---
 
-High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, but horrible AUC and log_loss values. (Log_loss quantifies how correct the predictions are, it takes how far off the model is into account, so a high value means that when the model is wrong it is very wrong). The ROC curve is also horrible, a good model goes high up into the top left corner to maximize the area underneath it.
+High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, but horrible AUC and log_loss values. The ROC curve is also not good.
 
 .pull-left[
 ```{r accuracy_and_graph, echo = FALSE}
@@ -559,6 +696,8 @@ The logistic modeling indicated:
 1. As shown by our explanatory data analysis, sex was a major predictor in whether or not someone was alcoholic. Especially for males, the odds of being a alcoholic increases.
 
 2. Interestingly, the father's job also tended to have a greater impact on increasing the odds of being alcoholic, barring Teaching. For fathers who were teachers, odds of becoming alcoholic decreased, while for mothers, increased. Teachers were the only level of Mother's job that was assosciated with an increase of being alcoholic.
+
+However, there is likely some other factor(s) that is not considered in either model that contributes significantly to alcoholism, resulting in poor models. 
 
 ---
 
