@@ -260,7 +260,7 @@ lin_model_all <- linear_reg() %>%
         absences, data = student_por)
 ```
 
-A residual plot of the logistic model with all variables as predictors shows the same trends as the previous one. This further supports the fact that a linear model would be inapporpiate in this setting.
+A residual plot of the second linear model with all variables as predictors shows the same trends as the previous one. This further supports the fact that a linear model would be inapporpiate in this setting.
 
 ```{r resid-all, out.width="70%", fig.width=4, echo = FALSE}
 aug2 <- augment(lin_model_all$fit)
@@ -709,7 +709,7 @@ Some of the limitations within in our data analysis and results:
 
 2. The sample was only based on individuals in secondary school taking Portuguese language courses and the school itself is in Portugal. Thus the model should be carefully interpreted for those outside of this demographic.
 
-3. Given the sample was taken within the same school, it is possible that there is slightly non-independence among the observations due to factors like peer pressure.
+3. Given the sample was taken within the same two school, it is possible that there is slightly non-independence among the observations due to factors like peer pressure.
 
 4. The data set was also independently sourced from https://www.kaggle.com/uciml/student-alcohol-consumption/discussion/206577, and relied on self-reporting alcohol consumption factors.
 
