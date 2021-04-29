@@ -427,7 +427,7 @@ From the matrix it seems that out model does decently well. The predicted and ac
 High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, low AUC and high log_loss values. (Log_loss quantifies how correct the predictions are, it takes how far off the model is into account, so a high value means that when the model is wrong it is very wrong). The ROC curve is also horrible, a good model goes high up into the top left corner to maximize the area underneath it.
 
 .pull-left[
-```{r accuracy_and_graph, echo = FALSE}
+```{r accuracy_and_graph_one, echo = FALSE}
 predictions %>%
   accuracy(Alcoholism, .pred_class) 
 
@@ -460,7 +460,7 @@ Model2_metrics <- tibble(
 ```
 ]
 .pull-right[
-```{r graph, out.width="200%", fig.width=5, echo = FALSE}
+```{r graph_one, out.width="200%", fig.width=5, echo = FALSE}
 predictions %>%
   roc_curve(Alcoholism, .pred_1) %>%
   ggplot(aes(x = 1 - specificity, y = sensitivity)) +

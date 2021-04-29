@@ -56,7 +56,7 @@ Roughly 11.56% of students have a total alcohol consumption higher than 3 (out o
 ---
 &lt;img src="presentation_files/figure-html/total-dalc-walc-alcoholism-1.png" width="80%" /&gt;
 
-Those who have high weekend alcohol consumption (greater than 3), tend to be alcoholics. Alcoholism seems to depend more on weeked alcohol consumption than daily alcohol consumption.
+Those who have high weekend alcohol consumption (greater than 3), tend to be alcoholics. Alcoholism seems to depend more on weekend alcohol consumption than daily alcohol consumption.
 
 ---
 
@@ -81,7 +81,7 @@ High schoolers who choose their school based on reputation have the lowest total
 ---
 &lt;img src="presentation_files/figure-html/Pstatus-1.png" width="80%" /&gt;
 
-Highschoolers with parents who live together have a higher average total alcohol consumption value, than those whose parents live apart. 
+High schoolers with parents who live together have a higher average total alcohol consumption value than those whose parents live apart. 
 
 ---
 class: inverse, middle, center
@@ -177,6 +177,42 @@ This model indicates that holding all other factors constant, an increase in one
 
 
 
+
+
+&lt;img src="presentation_files/figure-html/evaluating_model_one-1.png" width="60%" /&gt;
+
+From the matrix it seems that out model does decently well. The predicted and actual values to not match up 28 times, but the accuracy seems to be pretty high. 
+---
+
+High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, low AUC and high log_loss values. (Log_loss quantifies how correct the predictions are, it takes how far off the model is into account, so a high value means that when the model is wrong it is very wrong). The ROC curve is also horrible, a good model goes high up into the top left corner to maximize the area underneath it.
+
+.pull-left[
+
+```
+## # A tibble: 1 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy binary         0.888
+```
+
+```
+## # A tibble: 1 x 3
+##   .metric     .estimator .estimate
+##   &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+## 1 mn_log_loss binary          2.69
+```
+
+```
+## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.230
+```
+]
+.pull-right[
+&lt;img src="presentation_files/figure-html/graph_one-1.png" width="200%" /&gt;
+]
+
 ---
 # Logistic Model 2
 
@@ -226,7 +262,7 @@ This model indicates that holding all other factors constant, an increase in one
 From the matrix it is clear that this model is flawed. While it correctly predicts the majority of cases, it will never predict that someone has a total alcohol consumption over 3.
 ---
 
-High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, but horrible AUC and log_loss values. (Log_loss quantifies how correct the predictions are, it takes how far off the model is into account, so a high value means that when the model is wrong it is very wrong). The ROC curve is also horrible, a good model goes high up into the top left corner to maximize the area underneath it.
+High accuracy and AUC values are preferred, while low log_loss values are preferred. This model has a high accuracy, but horrible AUC and log_loss values. The ROC curve is also not good.
 
 .pull-left[
 
@@ -270,6 +306,8 @@ The logistic modeling indicated:
 1. As shown by our explanatory data analysis, sex was a major predictor in whether or not someone was alcoholic. Especially for males, the odds of being a alcoholic increases.
 
 2. Interestingly, the father's job also tended to have a greater impact on increasing the odds of being alcoholic, barring Teaching. For fathers who were teachers, odds of becoming alcoholic decreased, while for mothers, increased. Teachers were the only level of Mother's job that was assosciated with an increase of being alcoholic.
+
+However, there is likely some other factor(s) that is not considered in either model that contributes significantly to alcoholism, resulting in poor models. 
 
 ---
 
